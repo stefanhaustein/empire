@@ -1,6 +1,6 @@
 program galactic_empire;
 
-uses xstring, xsystem, crt, dos;
+uses (* xstring, xsystem, *) crt, dos;
 
 const
   comPort = 1;
@@ -12,6 +12,61 @@ var
   cmd1, cmd2: string;
   cx, cy, Lines: integer;
 
+  (* --- Start of missing functions --- *)
+
+  procedure fatal(s: string);
+  begin
+    WriteLn(s);
+    Halt(1);
+  end;
+
+  function long2str(l: longint; n: integer): String;
+  var
+    s: String;
+  begin
+    str(l, s);
+    while (length(s) < n) do
+    begin
+      s := ' ' + s;
+    end;
+
+    long2str := s;
+  end;
+
+  function int2str(i: integer; n: integer): String;
+  var
+    s: String;
+  begin
+    str(i, s);
+    while (length(s) < n) do
+    begin
+      s := ' ' + s;
+    end;
+
+    int2str := s;
+  end;
+
+  function alltrim(s: String): String;
+  begin
+    while ((length(s) > 0) and (s[1] <= ' ')) do
+    begin
+      s := copy(s, 2, 255);
+    end;
+
+    while ((length(s) > 0) and (s[length(s)] <= ' ')) do
+    begin
+      s := copy(s, 1, length(s) - 1);
+    end;
+
+    alltrim := s;
+  end;
+
+  function iif(b: boolean; s: string; t: string): string;
+  begin
+    if b then iif := s else iif := t;
+  end;
+
+  (* --- End of missing functions --- *)
 
   procedure InitCOM (baud: word);
     var
@@ -427,9 +482,11 @@ end;
 
 
 function waitkey: char;
+  var
+    c: char;
   begin
     while keypressed do
-      readkey;
+      c := readkey;
     comwriteln ('');
     comwrite (' - Taste - ');
     waitkey := readkey;
@@ -504,6 +561,8 @@ end;
 
 
   procedure error (s: string);
+    var
+      c: char;
     begin
       gotoxy (3,lines-1);
       setcolor (red+8+128, 15+128);
@@ -511,9 +570,9 @@ end;
       COMwrite (s+#7);
 
       while keypressed do
-        readkey;
+        c := readkey;
 
-      readkey;
+      c := readkey;
     end;
 
 
@@ -969,6 +1028,7 @@ var name, password, number: string;
   error: integer;
   pn: longint;
   p: planetrec;
+  c: char;
 begin
   clrscr;
 
@@ -1035,7 +1095,7 @@ begin
       closeMsg;
 
       login := true;
-      waitkey;
+      c := waitkey;
     end
     else begin
       loadplayer (id, player);
@@ -1055,7 +1115,7 @@ begin
           COMwriteln ('');
           COMwriteln ('Ich erwarte Ihre Anweisungen, Kommandant '+player.name+'.');
         end;
-      waitkey;
+      c := waitkey;
     end;
   end;
 end;
@@ -1143,6 +1203,7 @@ procedure displaymessages;
 var m: string;
   n: longInt;
   c: longint;
+  k: char;
 
 begin
   assign (msg, 'msg'+itos(id)+'.emp');
@@ -1155,7 +1216,7 @@ begin
       readln (msg,m);
       if c mod (lines-7) = 0 then begin
         if (c <> 0) then
-          waitkey;
+          k := waitkey;
         clrscr;
         COMwriteln ('     Mitteilungen / Nachrichten');
         COMwriteln ('     ==========================');
@@ -1167,7 +1228,7 @@ begin
     rewrite (msg);
   end;
   if c mod (lines-7) <> 0 then
-    readkey;
+    k := readkey;
 end;
 
 
@@ -1176,10 +1237,11 @@ procedure SendText;
 var
   s, t: string;
   n: longInt;
+  b: boolean;
 begin
   clrscr;
   COMwrite ('Send message to: ');
-  instr (s,20);
+  b := instr (s,20);
   comwriteln ('');
   n := PlayerID (s);
   if n = 0 then begin
@@ -1190,7 +1252,7 @@ begin
     COMwriteln ('Message Text:');
     openMSG (n, player.name);
     repeat
-      instr (t,79);
+      b := instr (t,79);
       comwriteln ('');
       writeMSG (t);
     until t='';
@@ -1203,6 +1265,7 @@ var
   n: integer;
   p: planetrec;
   s: string;
+  b: boolean;
 begin
   n := input (' - Planet Umbenennen; ID: ');
   if n = 0 then
@@ -1228,7 +1291,7 @@ begin
 
 
   comwrite ('Neuer Name: ');
-  instr (s,16);
+  b := instr (s,16);
   if s <> '' then
     begin
       p.name := s;
@@ -1244,6 +1307,8 @@ var n,nn,paz,pfl,ppr,faz,ffl: longint;
   p:planetrec;
   f:fleetrec;
   s: string;
+  b: boolean;
+  k: char;
 begin
   clrscr;
   COMwriteln ('     Statistische Informationen');
@@ -1252,7 +1317,7 @@ begin
   COMwriteln ('');
   if era = false then begin
     COMwrite ('                    Kommandant: ');
-    instr (s,20);
+    b := instr (s,20);
     comwriteln ('');
     COMwriteln  ('');
     n := playerId (s);
@@ -1303,7 +1368,7 @@ begin
     Player.name := '';
   end;
 
-  waitkey;
+  k := waitkey;
 end;
 
 procedure mitspieler;
@@ -1631,6 +1696,7 @@ procedure mainloop (pid: integer);
       p, d: planetrec;
       range, anz: longint;
       f: fleetrec;
+      k: char;
 
     begin
       collectFleet := false;
@@ -1719,7 +1785,7 @@ procedure mainloop (pid: integer);
       if c = 0 then
         error ('Keine eigenen Planeten mit Truppen in Reichweite')
       else
-        waitkey;
+        k := waitkey;
 
 
   end;
@@ -1780,6 +1846,8 @@ procedure mainloop (pid: integer);
 
 
   var n: integer;
+  k: char;
+  label break, continue;
 
   begin
     loadPlanet (pid, planet);
@@ -1804,8 +1872,10 @@ procedure mainloop (pid: integer);
           end;
 
         comwrite ('['+int2str (dt div (60*18),-2)+':'+int2str(dt div 18 mod 60,-2)+'] Kommando?  '#8);
+        (*
         while (bios^.Timer mod 18 = 0) and not keypressed do;
         while (bios^.Timer mod 18 <> 0) and not keypressed do;
+        *)
       until keypressed;
       c := upcase (readkey);
       comwrite (c);
@@ -1857,18 +1927,23 @@ procedure mainloop (pid: integer);
                   if radius < 7 then
                     inc(radius)
                   else
-                    continue;
+                    goto continue;
                 'I':
                   if radius > 1 then
                     dec (radius)
                   else
-                    continue;
-                else break;
+                    goto continue;
+                else goto break
               end;
 
               drawMap (1,1,79, lines, planet.x, planet.y, radius);
 
+              continue:
+
             until false;
+
+            break:
+
             restoreAll
           end;
         'S':
@@ -1933,7 +2008,7 @@ procedure mainloop (pid: integer);
                   error ('UngÅltiger Befehl')
                 else
                   begin
-                    waitkey;
+                    k := waitkey;
                     restoreAll;
                   end;
               end;
@@ -2046,4 +2121,4 @@ begin
     statistik (true);
   end;
   leave;
-end.
+end.
