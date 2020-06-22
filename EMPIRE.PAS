@@ -23,11 +23,20 @@ var
   function long2str(l: longint; n: integer): String;
   var
     s: String;
+    c: char;
   begin
+    if (n < 0) then begin
+      c := '0';
+      n := -n;
+    end
+    else begin
+      c := ' ';
+    end;
+
     str(l, s);
     while (length(s) < n) do
     begin
-      s := ' ' + s;
+      s := c + s;
     end;
 
     long2str := s;
@@ -36,11 +45,20 @@ var
   function int2str(i: integer; n: integer): String;
   var
     s: String;
+    c: char;
   begin
+    if (n < 0) then begin
+      c := '0';
+      n := -n;
+    end
+    else begin
+      c := ' ';
+    end;
+
     str(i, s);
     while (length(s) < n) do
     begin
-      s := ' ' + s;
+      s := c + s;
     end;
 
     int2str := s;
@@ -1847,7 +1865,7 @@ procedure mainloop (pid: integer);
 
   var n: integer;
   k: char;
-  label break, continue;
+  label label_break, label_continue;
 
   begin
     loadPlanet (pid, planet);
@@ -1927,22 +1945,22 @@ procedure mainloop (pid: integer);
                   if radius < 7 then
                     inc(radius)
                   else
-                    goto continue;
+                    goto label_continue;
                 'I':
                   if radius > 1 then
                     dec (radius)
                   else
-                    goto continue;
-                else goto break
+                    goto label_continue;
+                else goto label_break
               end;
 
               drawMap (1,1,79, lines, planet.x, planet.y, radius);
 
-              continue:
+              label_continue:
 
             until false;
 
-            break:
+            label_break:
 
             restoreAll
           end;
