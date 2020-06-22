@@ -70,9 +70,10 @@ var
 
   procedure InitCOM (baud: word);
     var
-      r: registers;
+    (*  r: registers; *)
       b: byte;
     begin
+(*
       if not local then
         begin
           case baud of
@@ -107,18 +108,19 @@ var
           r.dx := COMport;
           intr ($14, r);
       end;
+*)
   end;
 
   procedure CloseCom;
-    var
-      r: registers;
-    begin
+   (* var
+      r: registers;*)
+    begin (*
       if not local then
         begin
           r.ah := $5;
           r.dx := COMport;
           intr ($14, r);
-        end;
+        end; *)
     end;
 
   procedure transmit (s: string);
@@ -127,6 +129,10 @@ var
       i: integer;
     begin
       if not local then
+        begin
+          write(s);
+        end;
+(*
         begin
           for i := 1 to length (s) do
             begin
@@ -145,6 +151,7 @@ var
           r.di := ofs (s) + 1;
           intr ($14, r);}
         end;
+*)
     end;
 
 
@@ -171,6 +178,7 @@ var
     end;
 
   procedure SetColor (i, j: integer);
+    var fg, bg: integer;
     begin
       if mono then
         i := j;
@@ -178,9 +186,14 @@ var
       if i <> color then
         begin
           color := i;
-          transmit (^V^A+chr(i and 127));
-          if color and 128 <> 0 then
-            transmit (^V^B);
+	  fg := 30 + i mod 8;
+          bg := 40 + i div 16 mod 8;
+          if i > 127 then bg := bg + 60;
+          if i mod 16 > 15 then fg := fg + 60;
+
+          transmit (#27'[' + int2str(fg, 0) + ';' + int2str(bg, 0) + 'm');
+(*          if color and 128 <> 0 then
+            transmit (^V^B); *)
         end;
 
       if local then
@@ -313,6 +326,7 @@ end;
 procedure testleave;
 var r: registers;
 begin
+(*
   if not local then
     begin
       r.ah := 3;
@@ -323,10 +337,10 @@ begin
       if r.al and 128 = 0 then
         leave;
     end;
-
+*)
   dt := 36*60*18 - (gettimer - timer);
 
-  if local then
+(*  if local then *)
     dt := dt + 20*60*18;
 
   if dt <0 then leave;
@@ -336,7 +350,12 @@ procedure gotoxy (x,y:integer);
 
   procedure moveReal;
     var dx, dy: integer;
+
     begin
+
+      write(#27 + '[' + int2str(y,0) + ';' + int2str(x, 0) + 'H');
+
+      (*
       if byte(x) in [17, 19, 27] then
         dx := 1
       else
@@ -354,13 +373,14 @@ procedure gotoxy (x,y:integer);
 
       if (dx <> 0) then
         transmit (^V^G);
-
+*)
     end;
 
 begin
   if local then
     crt.gotoXY (x, y)
   else
+(*
     if x = cx then
       begin
         if y <> cy then
@@ -369,7 +389,7 @@ begin
               transmit (^V^D)
             else if cy + 1 = y then
               transmit (#10)
-            else
+            else 
               moveReal;
           end;
       end
@@ -379,16 +399,15 @@ begin
           begin
             if (x <> cx) and (x = 1) then
               transmit (#13);
-
             if cx - 1 = x then
               transmit (^V^F)
             else if cx + 1 = x then
               transmit (^V^G)
-            else
+            else 
               moveReal;
           end;
       end
-    else
+    else *)
       moveReal;
 
   cx := x;
@@ -411,11 +430,13 @@ procedure clearArea (x1, y1, x2, y2: integer);
         else
           begin
             gotoxy (x1, y);
-
+            write (copy ('                                                                                  ',1, x2));
+            (*
             if x2 in [17,18,27] then
               transmit (' '+^Y#32+chr (x2-1))
             else
               transmit (' '+^Y#32+chr (x2-1));
+*)
           end;
 
         cx := 999;
@@ -432,7 +453,7 @@ begin
     crt.clrscr;
   c := color;
   color := magenta;
-  transmit (^L);
+  transmit (#27'[2J');
   setcolor (c, c);
   testleave;
   gotoxy (1,1);
@@ -445,7 +466,7 @@ var r: registers;
   begin
     testleave;
 
-    if not local then
+   (*if not local then
       begin
         if crt.keypressed then
           if crt.readkey = #27 then
@@ -456,7 +477,7 @@ var r: registers;
         intr ($14, r);
         keypressed := r.ax <> $ffff;
       end
-    else
+    else *)
       keypressed := crt.keypressed;
   end;
 
@@ -469,14 +490,14 @@ begin
 
   if crt.keypressed then
     readkey := crt.readkey
-  else
+ (* else
     begin
       r.ah := $2;
       r.dx := COMPORT;
       intr ($14, r);
 
       readKey := chr (r.al);
-    end;
+    end; *)
 
 end;
 
@@ -504,7 +525,7 @@ begin
       COMwrite (c);
     end else if (c = #8) and (length(s) >= 1) then begin
       s := copy (s, 1, length (s) - 1);
-      COMwrite (#8' '#8);
+      COMwrite (#27'[1D; '#27'[1D;');
     end else if c <> #13 then COMwrite (#7);
   until (c = #13) or (c=#27);
 
@@ -1865,12 +1886,13 @@ procedure mainloop (pid: integer);
 
       repeat
         gotoxy (3,lines-3);
+(*
         if not local then
           begin
             crt.gotoxy (1,8);
             write ('Time left: '+int2str (dt div (60*18),-2)+':'+int2str(dt div 18 mod 60,-2));
           end;
-
+*)
         comwrite ('['+int2str (dt div (60*18),-2)+':'+int2str(dt div 18 mod 60,-2)+'] Kommando?  '#8);
         (*
         while (bios^.Timer mod 18 = 0) and not keypressed do;
@@ -2054,6 +2076,10 @@ var n: longint;
 begin
   randomize;
 
+  DirectVideo:=False;
+  Assign(Output,'');
+  Append(Output);
+
   Lines := 24;
   mono := true;
 
@@ -2121,4 +2147,5 @@ begin
     statistik (true);
   end;
   leave;
-end.
+end.
+
