@@ -143,7 +143,7 @@ var
 
   procedure transmit (s: string);
     var
-      r: registers;
+    (*  r: registers; *)
       i: integer;
     begin
       if not local then
@@ -174,8 +174,8 @@ var
 
 
   procedure COMwrite (s: string);
-    var
-      r: registers;
+   (* var
+      r: registers; *)
     begin
       if s <> '' then
         begin
@@ -343,7 +343,7 @@ begin
 end;
 
 procedure testleave;
-var r: registers;
+(* var r: registers; *)
 begin
 (*
   if not local then
@@ -408,7 +408,7 @@ begin
               transmit (^V^D)
             else if cy + 1 = y then
               transmit (#10)
-            else 
+            else
               moveReal;
           end;
       end
@@ -481,7 +481,7 @@ end;
 
 
 function keypressed: boolean;
-var r: registers;
+(* var r: registers;  *)
   begin
     testleave;
 
@@ -501,7 +501,7 @@ var r: registers;
   end;
 
 function readkey: char;
-var r: registers;
+(* var r: registers; *)
 begin
   repeat
     testleave;
