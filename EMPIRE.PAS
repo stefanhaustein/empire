@@ -197,10 +197,10 @@ var
 
   procedure SetColor (i, j: integer);
     var fg, bg: integer;
+      bold: char;
       blink: string;
     const
-      table = '0;30 0;34 0;32 0;36 0;31 0;35 0;33 0;37 '
-            + '1;30 1;34 1;32 1;36 1;31 1;35 1;33 1;37 ';
+      table: String = '04261537';
     begin
       if mono then
         i := j;
@@ -209,12 +209,14 @@ var
         begin
           color := i;
 	  fg := i mod 16;
+          if fg > 7 then bold := '1' else bold := '0';
+          fg := fg mod 8;
           if i > 127 then blink := ';5' else blink := '';
 
           if local then
             textcolor(color)
           else
-            transmit (#27'[' + copy(table, 1 + fg * 5, 4) + blink + 'm');
+            transmit (#27'[' + bold + ';3' + table[1+fg] + blink + 'm');
         end;
     end;
 
