@@ -338,8 +338,18 @@ end;
 
 
 function gettimer: longint;
+var
+  h,m,s,s100: word;
 begin
-  gettimer := meml[$40:$6c];
+  GetTime(h, m, s, s100);
+  gettimer := (h*3600 + m*60 + s) * 18 + s100 div 5;
+
+  (* gettimer := meml[$40:$6c]; *)
+end;
+
+function memb: byte;
+begin
+  memb := byte(gettimer);
 end;
 
 procedure testleave;
@@ -1102,7 +1112,7 @@ begin
 
   login := false;
 
-  pn := (mem[$40:$6c] and 127)*7+1;
+  pn := (memb (* mem[$40:$6c] *) and 127)*7+1;
 
   loadplanet (pn, p);
   if p.owner = 1 then begin
@@ -1116,7 +1126,7 @@ begin
       id := freePlayer;
       player.last := NewDate;
       player.name := name;
-      pn := mem[$40:$6c]*3+3;
+      pn := memb (* mem[$40:$6c] *) *3+3;
       loadplanet (pn, p);
       inc (p.ships, p.ships + random (10000)+1000);
       p.production := 5;
