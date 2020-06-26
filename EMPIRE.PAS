@@ -292,6 +292,11 @@ begin
   close (fleetFile);
   if not local then
     closeCom;
+
+  {$i-}
+  RmDir('mutex.emp');
+  {$i+}
+
   halt (0);
 end;
 
@@ -2117,6 +2122,14 @@ begin
   LOCAL := paramStr (2) = '0';
   if not local then
     initCom (19200);
+
+  {$i-}
+  MkDir('mutex.emp');
+  if IOResult<>0 then begin
+    ComWriteLn('Spiel bereits aktiv. Bitte versuche es sp„ter erneut.');
+    Halt(1);
+  end;
+  {$i+}
 
   id := 0;
   dt := 100000;
