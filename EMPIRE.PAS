@@ -910,7 +910,7 @@ begin
           begin
             p.ships := p.ships + f.ships;
             OpenMsg (p.owner, planetToS (f.destination, p));
-            writeMSG ('Truppen um '+itos(f.ships)+' auf '+itos (p.ships)+ ' Raumschiffe verst„rkt.');
+            writeMSG ('Truppen um '+itos(f.ships)+' auf '+itos (p.ships)+ ' Raumschiffe verstaerkt.');
             closeMSG;
           end
         else
@@ -948,7 +948,7 @@ begin
             begin
               OpenMsg (p.owner, planetToS (f.destination, p));
               writeMSG ('Angriff von '+itos(oriF)+' Raumschiffen von Kommandant '+f.ownername);
-              writeMSG ('erfolgreich zurckgeschlagen.');
+              writeMSG ('erfolgreich zurueckgeschlagen.');
               writeMSG (itos(p.ships)+' Raumschiffe haben die Gefechte unversehrt berstanden.');
               writeMSG ('Eigene Verluste: '+itos(p.ships-oriP)+' Raumschiffe.');
               closeMsg;
@@ -1034,7 +1034,7 @@ begin
 
   if todesstern then
     begin
-      COMWrite ('Best„tigung Start des Todessternes mit "J", sonst Abbruch? ');
+      COMWrite ('Bestaetigung Start des Todessternes mit "J", sonst Abbruch? ');
       if upcase (readkey) <> 'J' then
         begin
           error ('Start abgebrochen!                                            ');
@@ -1108,7 +1108,7 @@ begin
   COMwriteln ('');
   COMwriteln ('');
   COMwriteln ('Achtung: Ab jetzt Zeitbegrenzung nur noch 6 Stunden!');
-  ComWriteln ('         Terminalprogramm muá AVATAR-Steuerzeichen verstehen!');
+  ComWriteln ('         Terminalprogramm muss ANSI-Steuerzeichen verstehen!');
   COMwriteln ('');
   COMwriteln ('');
   COMwriteln ('Login Date: '+dtos(newdate));
@@ -1197,7 +1197,7 @@ begin
           if c <> 0 then if waitkey = #27 then exit;
           clrscr;
           if eigen then begin
-            COMwriteln ('     Liste aller eigenen Flottenverb„nde');
+            COMwriteln ('     Liste aller eigenen Flottenverbaende');
             COMwriteln ('     ===================================');
             COMwriteln ('');
             COMwriteln ('  ID Position Start Ziel                            Dauer    Schiffe');
@@ -1419,7 +1419,7 @@ begin
   COMwriteln ('');
 
   if era and (pfl + ffl = 0) then begin
-    COMwriteln ('Leider verloren ... Kommandant gel”scht!');
+    COMwriteln ('Leider verloren ... Kommandant geloescht!');
     Player.name := '';
   end;
 
@@ -1603,7 +1603,7 @@ procedure drawMap (x0, y0, x1, y1: integer; cx, cy, r: longint);
 
             if (p.owner = 0) then
               begin
-                s := 'ùù**şşÛÛÛÛÛÛÛÛÛÛÛ';
+                s := '""****************';
                 s := s[p.production+1];
               end
             else
@@ -1737,7 +1737,7 @@ procedure mainloop (pid: integer);
                 savefleet (n, f);
               end
             else
-              error ('Ungltige Zielangabe!              ');
+              error ('Ungueltige Zielangabe!              ');
           end;
       until doit <> 'J';
 
@@ -1854,26 +1854,24 @@ procedure mainloop (pid: integer);
     begin
       clrscr;
       setcolor (blue,7);
-      comwriteln ('ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿');
+      comwriteln ('-------------------------------------------------------------------------------');
       for n := 2 to (lines-1) do
         begin
           gotoxy (1, n);
-          Comwrite ('³');
+          Comwrite ('İ');
           if n < (lines -24+20) then
             begin
               gotoxy (51, n);
-              Comwrite ('³');
+              Comwrite ('İ');
             end;
           gotoxy (79, n);
-          comwrite ('³');
+          comwrite ('İ');
         end;
 
-
-      comwrite   (' ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ');
+      comwrite   (' -------------------------------------------------------------------------------');
 
       gotoxy (1, (lines-4));
-      comwrite   ('ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´');
-
+      comwrite   ('-------------------------------------------------------------------------------');
 
       restoreMap;
       with planet do
