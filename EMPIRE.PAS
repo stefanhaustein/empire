@@ -774,7 +774,7 @@ begin
       planet.production := 10;
     end else begin
       planet.name := 'NAMENLOS';
-      planet.ownername := 'UNABHŽNGIG';
+      planet.ownername := 'UNABHAENGIG';
     end;
     savePlanet (n, planet);
   end;
@@ -903,7 +903,7 @@ begin
             p.owner := 0;
             p.last := date;
             p.name := 'NAMENLOS';
-            p.ownername := 'UNABHŽNGIG';
+            p.ownername := 'UNABHAENGIG';
 
           end
         else if p.owner = f.owner then
@@ -1100,7 +1100,7 @@ begin
   COMwriteln ('     ===============');
   COMwriteln ('');
   COMwriteln ('                           (C) 1990, 1992 Stefan Haustein');
-  COMwriteln ('                                          Feldmannstraáe 68');
+  COMwriteln ('                                          Feldmannstrasse 68');
   COMwriteln ('                                          4200 Oberhausen 1');
   COMwriteln ('                                          Telefon: (02 08) 86 66 75');
   COMwriteln ('                                          Mailbox: (02 08) 86 29 10');
@@ -1564,7 +1564,7 @@ procedure drawMap (x0, y0, x1, y1: integer; cx, cy, r: longint);
                     y := (y - cy)*yf div r;
 
                     if l <> date*2 then
-                      mapWrite (x, y, 'ú')
+                      mapWrite (x, y, '.')
                     else
                       begin
                         if f.owner = id then
@@ -1858,14 +1858,14 @@ procedure mainloop (pid: integer);
       for n := 2 to (lines-1) do
         begin
           gotoxy (1, n);
-          Comwrite ('Ý');
+          Comwrite ('|');
           if n < (lines -24+20) then
             begin
               gotoxy (51, n);
-              Comwrite ('Ý');
+              Comwrite ('|');
             end;
           gotoxy (79, n);
-          comwrite ('Ý');
+          comwrite ('|');
         end;
 
       comwrite   (' -------------------------------------------------------------------------------');
