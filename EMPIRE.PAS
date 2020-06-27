@@ -536,8 +536,8 @@ begin
 
       writeln (msg);
       writeln (msg);
-      writeln (msg, 'Datum:  ',dtos (date));
-      writeln (msg, 'Quelle: ',s);
+      writeln (msg, 'Date:   ',dtos (date));
+      writeln (msg, 'Source: ',s);
       writeln (msg);
     end;
 end;
@@ -572,13 +572,13 @@ begin
     planet.owner := 0;
     planet.last := Newdate;
     if n = 1 then begin
-      planet.name := 'HAUPTPLANET';
+      planet.name := 'MAIN PLANET';
       planet.ownername := 'COMPUTER';
       planet.owner := 1;
       planet.production := 10;
     end else begin
-      planet.name := 'NAMENLOS';
-      planet.ownername := 'UNABHAENGIG';
+      planet.name := 'NAMELESS';
+      planet.ownername := 'INDEPENDENT';
     end;
     savePlanet (n, planet);
   end;
@@ -643,7 +643,7 @@ begin
   while date <= newdate do begin
     next := newdate+1;
     println ('');
-    print ('Berechnung... '+dtos (date)+':');
+    print ('Calculations... '+dtos (date)+':');
     for n := 1 to fl do begin
       loadFleet (n, f);
 
@@ -651,7 +651,7 @@ begin
         loadPlanet (f.destination, p);
         if (p.owner <> 0) and (f.owner <> p.owner) then begin
           OpenMsg (p.owner, planetToS (f.destination, p));
-          writeMSG ('ACHTUNG: Radar entdeckt feindliche Raumflotten im Anflug');
+          writeMSG ('ATTENTION: Approaching hostile fleet detected.');
           closeMSG;
         end;
         f.warning := true;
@@ -683,14 +683,14 @@ begin
               end;
 
             OpenMsg (p.owner, planetToS (f.destination, p));
-            writeMSG ('LETZTE MELDUNG - Planet und alle stationierten sowie im');
-            writeMSG ('Anflug befindlichen Truppen wurden durch einen Todesstern');
-            writeMSG ('von Kommandant '+f.ownername+' vernichtet.');
+            writeMSG ('FINAL MESSAGE - Planet and all based and approaching');
+            writeMSG ('troops were destroyed by a death star');
+            writeMSG ('by commander '+f.ownername+'.');
             closeMsg;
 
             OpenMsg (f.owner, planetToS (f.destination, p));
-            writeMSG ('Planet und alle stationierten sowie im Anflug befindlichen');
-            writeMSG ('Truppen konnten erfolgreich vernichtet werden.');
+            writeMSG ('Planet and all based and approaching troops');
+            writeMSG ('destoryed successfully.');
             closeMsg;
 
             p.x      := random (1000);
@@ -699,15 +699,15 @@ begin
             p.ships := random (1500);
             p.owner := 0;
             p.last := date;
-            p.name := 'NAMENLOS';
-            p.ownername := 'UNABHAENGIG';
+            p.name := 'NAMELESS';
+            p.ownername := 'INDEPENDENT';
 
           end
         else if p.owner = f.owner then
           begin
             p.ships := p.ships + f.ships;
             OpenMsg (p.owner, planetToS (f.destination, p));
-            writeMSG ('Truppen um '+itos(f.ships)+' auf '+itos (p.ships)+ ' Raumschiffe verstaerkt.');
+            writeMSG ('Troops increased by '+itos(f.ships)+' to '+itos (p.ships)+ ' ships.');
             closeMSG;
           end
         else
@@ -725,16 +725,16 @@ begin
 
             if f.ships > 0 then begin
               OpenMsg (p.owner, planetToS (f.destination, p));
-              writeMSG ('LETZTE MELDUNG - Alle Truppen durch '+itos(oriF)+' feindliche Schiffe vernichtet.');
-              writeMSG ('Planet steht unter Kontrolle von Kommandant '+f.ownername+'.');
-              writeMSG ('Eigene Verluste:     '+itos(oriP)+' Raumschiffe.');
-              writeMSG ('Feindliche Verluste: '+itos(oriF-f.ships)+' Raumschiffe.');
+              writeMSG ('FINAL MESSAGE - All troops destroyed by '+itos(oriF)+' enemy ships.');
+              writeMSG ('Planet now conrolled by '+f.ownername+'.');
+              writeMSG ('Own losses    '+itos(oriP)+' ships.');
+              writeMSG ('Enemy losses: '+itos(oriF-f.ships)+' ships.');
               closeMsg;
 
               OpenMsg (f.owner, planetToS (f.destination, p));
-              writeMSG ('Planet durch '+ itos(orif)+' Raumschiffe erobert.');
-              writeMSG ('Eigene Verluste:     '+itos(oriF-f.ships)+' Raumschiffe.');
-              writeMSG ('Feindliche Verluste: '+itos(oriP)+' Raumschiffe.');
+              writeMSG ('Planet conquered with '+ itos(orif)+' ships.');
+              writeMSG ('Own losses:   '+itos(oriF-f.ships)+' ships.');
+              writeMSG ('Enemy losses: '+itos(oriP)+' ships.');
               closeMsg;
 
               p.ships := f.ships;
@@ -744,15 +744,15 @@ begin
           else
             begin
               OpenMsg (p.owner, planetToS (f.destination, p));
-              writeMSG ('Angriff von '+itos(oriF)+' Raumschiffen von Kommandant '+f.ownername);
-              writeMSG ('erfolgreich zurueckgeschlagen.');
-              writeMSG (itos(p.ships)+' Raumschiffe haben die Gefechte unversehrt ueberstanden.');
-              writeMSG ('Eigene Verluste: '+itos(p.ships-oriP)+' Raumschiffe.');
+              writeMSG ('Attack by '+itos(oriF)+' ships of commander '+f.ownername);
+              writeMSG ('successfully defeated.');
+              writeMSG (itos(p.ships)+' ships survived the battle.');
+              writeMSG ('Own losses: '+itos(p.ships-oriP)+' ships.');
               closeMsg;
 
               OpenMsg (f.owner, planetToS (f.destination, p));
-              writeMSG ('LETZTE MELDUNG - Angriffstruppen konnten Zielplanet nicht erobern.');
-              writeMSG ('Alle '+itos(oriF)+' Raumschiffe vernichtet.');
+              writeMSG ('FINAL MESSAGE - Attack formation failed to conquer target planet.');
+              writeMSG ('All '+itos(oriF)+' ships were destroyed.');
               closeMsg;
             end;
         end;
@@ -782,9 +782,9 @@ begin
   f.warning := false;
 
   if todesstern then
-    s2 := input(' - Todesstern senden von Planet #')
+    s2 := input(' - send death star from planet #')
   else
-    s2 := input(' - Raumflotte senden von Planet #');
+    s2 := input(' - send fleet from planet #');
   if s2 = 0 then
     begin
       print (#8+int2str (s, 0));
@@ -795,30 +795,30 @@ begin
       s := s2;
       if (s < 0) or (s > planets) then
         begin
-          error ('Planet existiert nicht!');
+          error ('Planet does not exist!');
           exit;
         end;
       loadPlanet (s, p1);
       if p1.owner <> id then
         begin
-          error ('Planet wird nicht von Ihnen kontrolliert!');
+          error ('Planet not under your control!');
           exit;
         end;
     end;
 
   if todesstern and (p1.ships < 2000) then
     begin
-      error ('Nicht 2000 Schiffe zur Umwandlung stationiert!');
+      error ('2000 ships required for death star transformation!');
       exit;
     end;
 
 
-  d := input (' zu Planet #');
+  d := input (' to planet #');
 
   gotoxy (3,lines-2);
 
   if (d<1) or (d>planets) then begin
-    error ('Planet existiert nicht!');
+    error ('Planet does not exist!');
     exit;
   end;
 
@@ -826,15 +826,15 @@ begin
 
   time := traveltime (p1.x,p1.y,p2.x,p2.y);
 
-  println ('Der Flug nach '+p2.name+' wird ca. '+int2str(time,0)+' Stunden dauern.');
+  println ('The flight to '+p2.name+' will take about '+int2str(time,0)+' hours.');
   gotoxy (3, lines-1);
 
   if todesstern then
     begin
-      print ('Bestaetigung Start des Todessternes mit "J", sonst Abbruch? ');
-      if upcase (readkey) <> 'J' then
+      print ('Confirm launch of the death star with "Y", abort otherwise? ');
+      if upcase (readkey) <> 'Y' then
         begin
-          error ('Start abgebrochen!                                            ');
+          error ('Launch aborted!                                            ');
           exit
         end;
       f.ships := -1;
@@ -842,10 +842,10 @@ begin
     end
   else
     begin
-      n := input ('Wieviele Schiffe sollen eingesetzt werden [0..'+long2str(p1.ships,0)+']? ');
+      n := input ('How many ships [0..'+long2str(p1.ships,0)+']? ');
 
       if n <= 0 then begin
-        error ('Diese Angabe ist ungueltig!                                                  ');
+        error ('Invalid input!                                                  ');
         exit;
       end;
 
