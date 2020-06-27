@@ -1,9 +1,6 @@
 program galactic_empire;
 
-uses (* xstring, xsystem, *) crt, dos;
-
-const
-  comPort = 1;
+uses crt, dos;
 
 var
   Local: boolean;
@@ -86,103 +83,11 @@ var
 
   (* --- End of missing functions --- *)
 
-  procedure InitCOM (baud: word);
-    var
-    (*  r: registers; *)
-      b: byte;
-    begin
-(*
-      if not local then
-        begin
-          case baud of
-            19200: b := 0;
-             9600: b := 128+64+32;
-            else
-              fatal ('Nicht erlaubte Baudrate!');
-          end;
-
-          r.ah := $4;
-          r.dx := COMport;
-          intr ($14, r);
-
-          if r.ax <> $1954 then
-            fatal ('FOSSIL-Treiber nicht installiert!');
-
-          r.ah := 0;
-          r.al := b or 3;
-          r.dx := COMport;
-          intr ($14, r);
-
-          r.ah := $f;
-          r.al := 1+2 + $f0;
-          r.dx := COMport;
-          intr ($14, r);
-
-          r.ah := $9;
-          r.dx := COMport;
-          intr ($14, r);
-
-          r.ah := $A;
-          r.dx := COMport;
-          intr ($14, r);
-      end;
-*)
-  end;
-
-  procedure CloseCom;
-   (* var
-      r: registers;*)
-    begin (*
-      if not local then
-        begin
-          r.ah := $5;
-          r.dx := COMport;
-          intr ($14, r);
-        end; *)
-    end;
-
-  procedure transmit (s: string);
-    var
-    (*  r: registers; *)
-      i: integer;
-    begin
-      if not local then
-        begin
-          write(s);
-        end;
-(*
-        begin
-          for i := 1 to length (s) do
-            begin
-              r.dx := comport;
-              r.ah := 1;
-              r.al := ord (s[i]);
-              intr ($14, r);
-             end;
-          {  r.ah := $08;
-            r.dx := ComPort;
-            Intr ($14, r);
-          r.ah := $19;
-          r.cx := length (s);
-          r.dx := COMPORT;
-          r.es := seg (s);
-          r.di := ofs (s) + 1;
-          intr ($14, r);}
-        end;
-*)
-    end;
-
-
   procedure print (s: string);
-   (* var
-      r: registers; *)
     begin
       if s <> '' then
         begin
-          if local then
-            write (s)
-          else
-            transmit (s);
+          write (s);
           cx := cx + length (s);
         end;
     end;
@@ -216,7 +121,7 @@ var
           if local then
             textcolor(color)
           else
-            transmit (#27'[' + bold + ';3' + table[1+fg] + blink + 'm');
+            write(#27'[' + bold + ';3' + table[1+fg] + blink + 'm');
         end;
     end;
 
@@ -290,8 +195,6 @@ begin
   close (playerFile);
   close (planetFile);
   close (fleetFile);
-  if not local then
-    closeCom;
 
   {$i-}
   RmDir('mutex.emp');
@@ -348,8 +251,6 @@ var
 begin
   GetTime(h, m, s, s100);
   gettimer := (h*3600 + m*60 + s) * 18 + s100 div 5;
-
-  (* gettimer := meml[$40:$6c]; *)
 end;
 
 function memb: byte;
@@ -358,91 +259,23 @@ begin
 end;
 
 procedure testleave;
-(* var r: registers; *)
 begin
-(*
-  if not local then
-    begin
-      r.ah := 3;
-      r.dx := comPort;
-
-      intr ($14, r);
-
-      if r.al and 128 = 0 then
-        leave;
-    end;
-*)
   dt := 36*60*18 - (gettimer - timer);
-
-(*  if local then *)
-    dt := dt + 20*60*18;
-
+  dt := dt + 20*60*18;
   if dt <0 then leave;
 end;
 
 procedure gotoxy (x,y:integer);
 
-  procedure moveReal;
-    var dx, dy: integer;
-
-    begin
-
-      write(#27 + '[' + int2str(y,0) + ';' + int2str(x, 0) + 'H');
-
-      (*
-      if byte(x) in [17, 19, 27] then
-        dx := 1
-      else
-        dx := 0;
-
-      if (y = 17) or (y = 19) or (y = 27) then
-        dy := 1
-      else
-        dy := 0;
-
-      transmit (^V^H+chr(y-dy)+chr(x+dx));
-
-      if (dy <> 0) then
-        transmit (#10);
-
-      if (dx <> 0) then
-        transmit (^V^G);
-*)
-    end;
-
 begin
   if local then
-    crt.gotoXY (x, y)
+    begin
+      crt.gotoXY (x, y);
+    end
   else
-(*
-    if x = cx then
-      begin
-        if y <> cy then
-          begin
-            if cy - 1 = y then
-              transmit (^V^D)
-            else if cy + 1 = y then
-              transmit (#10)
-            else
-              moveReal;
-          end;
-      end
-    else if y = cy then
-      begin
-        if (x <> cx) or (x = 1) then
-          begin
-            if (x <> cx) and (x = 1) then
-              transmit (#13);
-            if cx - 1 = x then
-              transmit (^V^F)
-            else if cx + 1 = x then
-              transmit (^V^G)
-            else 
-              moveReal;
-          end;
-      end
-    else *)
-      moveReal;
+    begin
+      write(#27 + '[' + int2str(y,0) + ';' + int2str(x, 0) + 'H');
+    end;
 
   cx := x;
   cy := y;
@@ -465,12 +298,6 @@ procedure clearArea (x1, y1, x2, y2: integer);
           begin
             gotoxy (x1, y);
             write (copy ('                                                                                  ',1, x2));
-            (*
-            if x2 in [17,18,27] then
-              transmit (' '+^Y#32+chr (x2-1))
-            else
-              transmit (' '+^Y#32+chr (x2-1));
-*)
           end;
 
         cx := 999;
@@ -487,7 +314,7 @@ begin
     crt.clrscr;
   c := color;
   color := magenta;
-  transmit (#27'[2J');
+  write (#27'[2J');
   setcolor (c, c);
   testleave;
   gotoxy (1,1);
@@ -496,27 +323,12 @@ end;
 
 
 function keypressed: boolean;
-(* var r: registers;  *)
   begin
     testleave;
-
-   (*if not local then
-      begin
-        if crt.keypressed then
-          if crt.readkey = #27 then
-            leave;
-
-        r.ah := $c;
-        r.dx := COMPORT;
-        intr ($14, r);
-        keypressed := r.ax <> $ffff;
-      end
-    else *)
-      keypressed := crt.keypressed;
+    keypressed := crt.keypressed;
   end;
 
 function readkey: char;
-(* var r: registers; *)
 begin
   repeat
     testleave;
@@ -524,14 +336,6 @@ begin
 
   if crt.keypressed then
     readkey := crt.readkey
- (* else
-    begin
-      r.ah := $2;
-      r.dx := COMPORT;
-      intr ($14, r);
-
-      readKey := chr (r.al);
-    end; *)
 
 end;
 
@@ -793,13 +597,6 @@ begin
   player.last := Newdate;
   savePlayer (1, player);
 end;
-
-
-
-
-
-
-
 
 
 function conv (c: char): longint;
@@ -1099,11 +896,8 @@ begin
   println ('     Galactic Empire');
   println ('     ===============');
   println ('');
-  println ('                           (C) 1990, 1992 Stefan Haustein');
-  println ('                                          Feldmannstrasse 68');
-  println ('                                          4200 Oberhausen 1');
-  println ('                                          Telefon: (02 08) 86 66 75');
-  println ('                                          Mailbox: (02 08) 86 29 10');
+  println ('                           (C) 1990, 1992, 2020 Stefan Haustein');
+  println ('                                                Joerg Pleumann');
 
   println ('');
   println ('');
@@ -1117,7 +911,7 @@ begin
 
   login := false;
 
-  pn := (memb (* mem[$40:$6c] *) and 127)*7+1;
+  pn := (memb  and 127)*7+1;
 
   loadplanet (pn, p);
   if p.owner = 1 then begin
@@ -1131,7 +925,7 @@ begin
       id := freePlayer;
       player.last := NewDate;
       player.name := name;
-      pn := memb (* mem[$40:$6c] *) *3+3;
+      pn := memb  *3+3;
       loadplanet (pn, p);
       inc (p.ships, p.ships + random (10000)+1000);
       p.production := 5;
@@ -1242,14 +1036,13 @@ begin
   end;
   if c = 0 then begin
     clrscr;
-    println (#13#10#10'Keine Flotten unterwegs');
+    println ('');
+    println ('');
+    println ('Keine Flotten unterwegs');
   end;
 
   setcolor (cyan, 7);
 end;
-
-
-
 
 
 var c: char;
@@ -1919,18 +1712,7 @@ procedure mainloop (pid: integer);
 
       repeat
         gotoxy (3,lines-3);
-(*
-        if not local then
-          begin
-            crt.gotoxy (1,8);
-            write ('Time left: '+int2str (dt div (60*18),-2)+':'+int2str(dt div 18 mod 60,-2));
-          end;
-*)
         print ('['+int2str (dt div (60*18),-2)+':'+int2str(dt div 18 mod 60,-2)+'] Kommando?  '#8);
-        (*
-        while (bios^.Timer mod 18 = 0) and not keypressed do;
-        while (bios^.Timer mod 18 <> 0) and not keypressed do;
-        *)
       until keypressed;
       c := upcase (readkey);
       print (c);
@@ -2119,8 +1901,6 @@ begin
   setcolor (cyan,7);
 
   LOCAL := paramStr (2) = '0';
-  if not local then
-    initCom (19200);
 
   {$i-}
   MkDir('mutex.emp');
@@ -2189,4 +1969,3 @@ begin
   end;
   leave;
 end.
-
