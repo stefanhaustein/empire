@@ -949,7 +949,7 @@ begin
               OpenMsg (p.owner, planetToS (f.destination, p));
               writeMSG ('Angriff von '+itos(oriF)+' Raumschiffen von Kommandant '+f.ownername);
               writeMSG ('erfolgreich zurueckgeschlagen.');
-              writeMSG (itos(p.ships)+' Raumschiffe haben die Gefechte unversehrt Åberstanden.');
+              writeMSG (itos(p.ships)+' Raumschiffe haben die Gefechte unversehrt ueberstanden.');
               writeMSG ('Eigene Verluste: '+itos(p.ships-oriP)+' Raumschiffe.');
               closeMsg;
 
@@ -1048,7 +1048,7 @@ begin
       n := input ('Wieviele Schiffe sollen eingesetzt werden [0..'+long2str(p1.ships,0)+']? ');
 
       if n <= 0 then begin
-        error ('Diese Angabe ist ungÅltig!                                                  ');
+        error ('Diese Angabe ist ungueltig!                                                  ');
         exit;
       end;
 
@@ -1137,7 +1137,7 @@ begin
       p.production := 5;
       if p.owner <> 0 then begin
         openMsg (p.owner, planetToS (pn, p));
-        writeMsg ('LETZTE MELDUNG - Feindliche Rebellen haben die Kontrolle Åbernommen.');
+        writeMsg ('LETZTE MELDUNG - Feindliche Rebellen haben die Kontrolle uebernommen.');
         closeMsg;
       end;
       p.owner := id;
@@ -1146,7 +1146,7 @@ begin
       saveplayer (id, player);
 
       openMsg (p.owner, planetToS (pn, p));
-      writeMsg ('Unsere Rebellen haben die Kontrolle Åbernommen.');
+      writeMsg ('Unsere Rebellen haben die Kontrolle uebernommen.');
       closeMsg;
 
       login := true;
@@ -1203,7 +1203,7 @@ begin
             COMwriteln ('  ID Position Start Ziel                            Dauer    Schiffe');
             COMwriteln ('-----------------------------------------------------------------------');
           end else begin
-            COMwriteln ('     Liste feindlicher FlottenverbÑnde');
+            COMwriteln ('     Liste feindlicher Flottenverbaende');
             COMwriteln ('     =================================');
             COMwriteln ('');
             COMwriteln ('  ID Position Ziel                            Dauer    Schiffe Kommandant');
@@ -1716,7 +1716,7 @@ procedure mainloop (pid: integer);
         COMWrite (' Pos: '+ptos(x,y)+' Ziel: '+trimplanet (f.destination,d)+' in '+
         long2str(f.enter-date,0)+' h');
         gotoxy (3, lines-1);
-        ComWrite ('Kurs Ñndern (J/N)? ');
+        ComWrite ('Kurs aendern (J/N)? ');
 
         doit := upCase(readkey);
         comWrite (doit);
@@ -1764,7 +1764,7 @@ procedure mainloop (pid: integer);
 
       if (pid <= 0) or (pid > planets) then
         begin
-          error ('UngÅltige Eingabe');
+          error ('Ungueltige Eingabe');
           exit;
         end;
 
@@ -1889,7 +1889,7 @@ procedure mainloop (pid: integer);
           menu ('T: Todesstern...');
           menu ('L: Liste...');
           menu ('Z: Flotten zusammenziehen');
-          menu ('N: Nachricht Åbermitteln');
+          menu ('N: Nachricht uebermitteln');
           menu ('A: Anzeige Farbe / 50 Z.');
           menu ('H: Hilfe');
           menu ('X: Ende');
@@ -1957,7 +1957,7 @@ procedure mainloop (pid: integer);
             n := Input ('Neuer Planet #');
             gotoxy (3,lines-1);
             if (n <= 0) or (n > planets) then
-              error ('UngÅltige Angabe'#7)
+              error ('Ungueltige Angabe'#7)
             else
               begin
                 loadplanet (n, planet);
@@ -2043,7 +2043,7 @@ procedure mainloop (pid: integer);
             setcolor (cyan+8, 15);
             ComWrite ('F');
             setcolor (cyan, 7);
-            comwrite (': feindliche FlottenverbÑnde? ');
+            comwrite (': feindliche Flottenverbaende? ');
 
             c := upcase (readkey);
             if c <> #27 then
@@ -2059,7 +2059,7 @@ procedure mainloop (pid: integer);
                 end;
 
                 if c = #27 then
-                  error ('UngÅltiger Befehl')
+                  error ('Ungueltiger Befehl')
                 else
                   begin
                     k := waitkey;
@@ -2124,7 +2124,7 @@ begin
   {$i-}
   MkDir('mutex.emp');
   if IOResult<>0 then begin
-    ComWriteLn('Spiel bereits aktiv. Bitte versuche es spÑter erneut.');
+    ComWriteLn('Spiel bereits aktiv. Bitte versuche es spaeter erneut.');
     Halt(1);
   end;
   {$i+}
