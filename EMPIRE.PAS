@@ -173,7 +173,7 @@ var
     end;
 
 
-  procedure COMwrite (s: string);
+  procedure print (s: string);
    (* var
       r: registers; *)
     begin
@@ -187,10 +187,10 @@ var
         end;
     end;
 
-  procedure COMwriteln (s: string);
+  procedure println (s: string);
     begin
-      COMwrite (s);
-      COMwrite (#13#10);
+      print (s);
+      print (#13#10);
       cx := 1;
       inc (cy);
     end;
@@ -542,8 +542,8 @@ function waitkey: char;
   begin
     while keypressed do
       c := readkey;
-    comwriteln ('');
-    comwrite (' - Taste - ');
+    println ('');
+    print (' - Taste - ');
     waitkey := readkey;
   end;
 
@@ -556,11 +556,11 @@ begin
     c := readkey;
     if (c>=' ') and (c <#255) and (length (s) <abs(ml)) and ((c in ['0'..'9']) or (ml > 0)) then begin
       s := s + c;
-      COMwrite (c);
+      print (c);
     end else if (c = #8) and (length(s) >= 1) then begin
       s := copy (s, 1, length (s) - 1);
-      COMwrite (#27'[1D; '#27'[1D;');
-    end else if c <> #13 then COMwrite (#7);
+      print (#27'[1D; '#27'[1D;');
+    end else if c <> #13 then print (#7);
   until (c = #13) or (c=#27);
 
   instr := c=#13;
@@ -596,7 +596,7 @@ function input (s: string): longint;
 var i: longint;
     err: integer;
 begin
-  COMwrite (s);
+  print (s);
   if not instr (s,-9) then
     begin
       input := -1;
@@ -605,7 +605,7 @@ begin
 
   if s = '' then
     begin
-      COMwrite ('0');
+      print ('0');
       input := 0;
       exit;
     end;
@@ -622,7 +622,7 @@ end;
       gotoxy (3,lines-1);
       setcolor (red+8+128, 15+128);
 
-      COMwrite (s+#7);
+      print (s+#7);
 
       while keypressed do
         c := readkey;
@@ -757,9 +757,9 @@ var
 
 begin
   rewrite (planetfile);
-  COMwriteln ('');
-  COMwriteln ('Autocreating Planets...');
-  COMwriteln ('');
+  println ('');
+  println ('Autocreating Planets...');
+  println ('');
   for n := 1 to 999 do begin
     planet.x      := random (1000);
     planet.y      := random (1000);
@@ -786,9 +786,9 @@ var
 
 begin
   rewrite (playerfile);
-  COMwriteln ('');
-  COMwriteln ('Autocreating Players...');
-  COMwriteln ('');
+  println ('');
+  println ('Autocreating Players...');
+  println ('');
   player.name := 'COMPUTER';
   player.last := Newdate;
   savePlayer (1, player);
@@ -845,8 +845,8 @@ begin
 
   while date <= newdate do begin
     next := newdate+1;
-    COMwriteln ('');
-    COMwrite ('Berechnung... '+dtos (date)+':');
+    println ('');
+    print ('Berechnung... '+dtos (date)+':');
     for n := 1 to fl do begin
       loadFleet (n, f);
 
@@ -859,7 +859,7 @@ begin
         end;
         f.warning := true;
         savefleet (n,f);
-        COMwrite (' W:'+int2str(n,0));
+        print (' W:'+int2str(n,0));
       end;
 
       
@@ -867,7 +867,7 @@ begin
         Workplanet (f.destination);
         loadPlanet (f.destination, p);
 
-        COMwrite (' A:'+int2str(n,0));
+        print (' A:'+int2str(n,0));
 
         if f.ships < 0 then
           begin
@@ -990,7 +990,7 @@ begin
     s2 := input(' - Raumflotte senden von Planet #');
   if s2 = 0 then
     begin
-      comWrite (#8+int2str (s, 0));
+      print (#8+int2str (s, 0));
       loadplanet (s, p1);
     end
   else
@@ -1029,12 +1029,12 @@ begin
 
   time := traveltime (p1.x,p1.y,p2.x,p2.y);
 
-  COMwriteln ('Der Flug nach '+p2.name+' wird ca. '+int2str(time,0)+' Stunden dauern.');
+  println ('Der Flug nach '+p2.name+' wird ca. '+int2str(time,0)+' Stunden dauern.');
   gotoxy (3, lines-1);
 
   if todesstern then
     begin
-      COMWrite ('Bestaetigung Start des Todessternes mit "J", sonst Abbruch? ');
+      print ('Bestaetigung Start des Todessternes mit "J", sonst Abbruch? ');
       if upcase (readkey) <> 'J' then
         begin
           error ('Start abgebrochen!                                            ');
@@ -1096,23 +1096,23 @@ begin
     end;
 
   id := 0;
-  COMwriteln ('     Galactic Empire');
-  COMwriteln ('     ===============');
-  COMwriteln ('');
-  COMwriteln ('                           (C) 1990, 1992 Stefan Haustein');
-  COMwriteln ('                                          Feldmannstrasse 68');
-  COMwriteln ('                                          4200 Oberhausen 1');
-  COMwriteln ('                                          Telefon: (02 08) 86 66 75');
-  COMwriteln ('                                          Mailbox: (02 08) 86 29 10');
+  println ('     Galactic Empire');
+  println ('     ===============');
+  println ('');
+  println ('                           (C) 1990, 1992 Stefan Haustein');
+  println ('                                          Feldmannstrasse 68');
+  println ('                                          4200 Oberhausen 1');
+  println ('                                          Telefon: (02 08) 86 66 75');
+  println ('                                          Mailbox: (02 08) 86 29 10');
 
-  COMwriteln ('');
-  COMwriteln ('');
-  COMwriteln ('Achtung: Ab jetzt Zeitbegrenzung nur noch 6 Stunden!');
-  ComWriteln ('         Terminalprogramm muss ANSI-Steuerzeichen verstehen!');
-  COMwriteln ('');
-  COMwriteln ('');
-  COMwriteln ('Login Date: '+dtos(newdate));
-  COMwriteln ('');
+  println ('');
+  println ('');
+  println ('Achtung: Ab jetzt Zeitbegrenzung nur noch 6 Stunden!');
+  println ('         Terminalprogramm muss ANSI-Steuerzeichen verstehen!');
+  println ('');
+  println ('');
+  println ('Login Date: '+dtos(newdate));
+  println ('');
   name := upstr (paramstr(1));
 
   login := false;
@@ -1157,18 +1157,18 @@ begin
 
       if newdate - player.last < 6 then
         begin
-          comwrite ('Zugriff auf die Flotte verweigert'+#13#10);
-          comwrite ('Erneuter Zugriff in '+int2str (6-newdate+player.last,2)+' Stunden'+#13#10);
+          print ('Zugriff auf die Flotte verweigert'+#13#10);
+          print ('Erneuter Zugriff in '+int2str (6-newdate+player.last,2)+' Stunden'+#13#10);
           login := false;
           id := 0;
         end
       else
         begin
           login := true;
-          COMwriteln ('Last login: '+dtos(player.last));
-          COMwriteln ('');
-          COMwriteln ('');
-          COMwriteln ('Ich erwarte Ihre Anweisungen, Kommandant '+player.name+'.');
+          println ('Last login: '+dtos(player.last));
+          println ('');
+          println ('');
+          println ('Ich erwarte Ihre Anweisungen, Kommandant '+player.name+'.');
         end;
       c := waitkey;
     end;
@@ -1197,17 +1197,17 @@ begin
           if c <> 0 then if waitkey = #27 then exit;
           clrscr;
           if eigen then begin
-            COMwriteln ('     Liste aller eigenen Flottenverbaende');
-            COMwriteln ('     ===================================');
-            COMwriteln ('');
-            COMwriteln ('  ID Position Start Ziel                            Dauer    Schiffe');
-            COMwriteln ('-----------------------------------------------------------------------');
+            println ('     Liste aller eigenen Flottenverbaende');
+            println ('     ===================================');
+            println ('');
+            println ('  ID Position Start Ziel                            Dauer    Schiffe');
+            println ('-----------------------------------------------------------------------');
           end else begin
-            COMwriteln ('     Liste feindlicher Flottenverbaende');
-            COMwriteln ('     =================================');
-            COMwriteln ('');
-            COMwriteln ('  ID Position Ziel                            Dauer    Schiffe Kommandant');
-            COMwriteln ('------------------------------------------------------------------------------');
+            println ('     Liste feindlicher Flottenverbaende');
+            println ('     =================================');
+            println ('');
+            println ('  ID Position Ziel                            Dauer    Schiffe Kommandant');
+            println ('------------------------------------------------------------------------------');
           end;
         end;
         inc (c);
@@ -1218,31 +1218,31 @@ begin
         h := (c and 1) * 8;
 
         setcolor (cyan+h,7);
-        COMwrite (int2str (n, 4)+' '+ptos(x,y)+' ');
+        print (int2str (n, 4)+' '+ptos(x,y)+' ');
 
         if eigen then
           begin
-            comwrite (long2str (f.source, 5)+' ');
+            print (long2str (f.source, 5)+' ');
             if d.owner = 0 then
               setcolor (green+h,15)
             else if d.owner <> id then
               setcolor (red+h,7);
           end;
 
-        comwrite (planetToS (f.destination,d));
+        print (planetToS (f.destination,d));
 
 
         setcolor (cyan+h,h);
-        comwrite (' '+int2str(dt,6));
-        if eigen or (dt <= 8) then COMwrite (ships2str (f.ships)) else COMwrite ('         ?');
-        if not eigen and (dt <= 4) then COMwrite (' '+f.ownername);
-        COMwriteln ('');
+        print (' '+int2str(dt,6));
+        if eigen or (dt <= 8) then print (ships2str (f.ships)) else print ('         ?');
+        if not eigen and (dt <= 4) then print (' '+f.ownername);
+        println ('');
       end;
     end;
   end;
   if c = 0 then begin
     clrscr;
-    COMwriteln (#13#10#10'Keine Flotten unterwegs');
+    println (#13#10#10'Keine Flotten unterwegs');
   end;
 
   setcolor (cyan, 7);
@@ -1273,11 +1273,11 @@ begin
         if (c <> 0) then
           k := waitkey;
         clrscr;
-        COMwriteln ('     Mitteilungen / Nachrichten');
-        COMwriteln ('     ==========================');
-        COMwriteln ('');
+        println ('     Mitteilungen / Nachrichten');
+        println ('     ==========================');
+        println ('');
       end;
-      COMwriteln (m);
+      println (m);
       inc (c);
     end;
     rewrite (msg);
@@ -1295,20 +1295,20 @@ var
   b: boolean;
 begin
   clrscr;
-  COMwrite ('Send message to: ');
+  print ('Send message to: ');
   b := instr (s,20);
-  comwriteln ('');
+  println ('');
   n := PlayerID (s);
   if n = 0 then begin
-    COMwriteln ('');
-    COMwriteln ('Destination does not exist');
+    println ('');
+    println ('Destination does not exist');
   end else begin
-    COMwriteln ('');
-    COMwriteln ('Message Text:');
+    println ('');
+    println ('Message Text:');
     openMSG (n, player.name);
     repeat
       b := instr (t,79);
-      comwriteln ('');
+      println ('');
       writeMSG (t);
     until t='';
     closeMSG;
@@ -1325,7 +1325,7 @@ begin
   n := input (' - Planet Umbenennen; ID: ');
   if n = 0 then
     begin
-      comwrite (#8+int2str (n0,0));
+      print (#8+int2str (n0,0));
       n := n0;
     end;
 
@@ -1345,7 +1345,7 @@ begin
     end;
 
 
-  comwrite ('Neuer Name: ');
+  print ('Neuer Name: ');
   b := instr (s,16);
   if s <> '' then
     begin
@@ -1366,18 +1366,18 @@ var n,nn,paz,pfl,ppr,faz,ffl: longint;
   k: char;
 begin
   clrscr;
-  COMwriteln ('     Statistische Informationen');
-  COMwriteln ('     ==========================');
-  COMwriteln ('');
-  COMwriteln ('');
+  println ('     Statistische Informationen');
+  println ('     ==========================');
+  println ('');
+  println ('');
   if era = false then begin
-    COMwrite ('                    Kommandant: ');
+    print ('                    Kommandant: ');
     b := instr (s,20);
-    comwriteln ('');
-    COMwriteln  ('');
+    println ('');
+    println  ('');
     n := playerId (s);
     if n = 0 then begin
-      COMwriteln (#7'Kommandant existiert nicht!');
+      println (#7'Kommandant existiert nicht!');
       exit;
     end;
   end else n := id;
@@ -1395,11 +1395,11 @@ begin
     end;
   end;
 
-  COMwriteln ('Anzahl kontrollierter Planeten: '+int2str (paz,0));
-  COMwriteln ('                  Gesamtanteil: '+int2str (paz * 100 div 1000,0)+' %');
-  COMwriteln ('      Stationierte Raumschiffe: '+long2str(pfl,0));
-  COMwriteln ('      Gesamtproduktion pro Tag: '+long2str (ppr * 24,0));
-  COMwriteln ('');
+  println ('Anzahl kontrollierter Planeten: '+int2str (paz,0));
+  println ('                  Gesamtanteil: '+int2str (paz * 100 div 1000,0)+' %');
+  println ('      Stationierte Raumschiffe: '+long2str(pfl,0));
+  println ('      Gesamtproduktion pro Tag: '+long2str (ppr * 24,0));
+  println ('');
 
   faz := 0;
   ffl := 0;
@@ -1412,14 +1412,14 @@ begin
     end;
   end;
 
-  COMwriteln ('            Anzahl Raumflotten: '+long2str(faz,0));
-  COMwriteln ('           Bewegte Raumschiffe: '+long2str (ffl,0));
-  COMwriteln ('');
-  COMwriteln ('         Raumschiffe insgesamt: '+long2str(pfl+ffl,0));
-  COMwriteln ('');
+  println ('            Anzahl Raumflotten: '+long2str(faz,0));
+  println ('           Bewegte Raumschiffe: '+long2str (ffl,0));
+  println ('');
+  println ('         Raumschiffe insgesamt: '+long2str(pfl+ffl,0));
+  println ('');
 
   if era and (pfl + ffl = 0) then begin
-    COMwriteln ('Leider verloren ... Kommandant geloescht!');
+    println ('Leider verloren ... Kommandant geloescht!');
     Player.name := '';
   end;
 
@@ -1438,12 +1438,12 @@ begin
       if c mod (lines-7) = 0 then begin
         if c <> 0 then if waitkey = #27 then exit;
         clrscr;
-        COMwriteln ('     Mitspieler');
-        COMwriteln ('     ==========');
-        COMwriteln ('');
+        println ('     Mitspieler');
+        println ('     ==========');
+        println ('');
       end;
       inc (c);
-      COMwriteln (chr(64+c)+': '+cutname(p.name)+'           '+copy(dtos(p.last),1,5));
+      println (chr(64+c)+': '+cutname(p.name)+'           '+copy(dtos(p.last),1,5));
     end;
   end;
 end;
@@ -1461,15 +1461,15 @@ begin
       if c mod (lines-9) = 0 then begin
         if c <> 0 then if waitkey = #27 then exit;
         clrscr;
-        COMwriteln ('     Kontrollierte Planeten');
-        COMwriteln ('     ======================');
-        COMwriteln ('');
-        COMwriteln ('     Name             Position              Schiffe Produktion');
-        COMwriteln ('--------------------------------------------------------------');
+        println ('     Kontrollierte Planeten');
+        println ('     ======================');
+        println ('');
+        println ('     Name             Position              Schiffe Produktion');
+        println ('--------------------------------------------------------------');
       end;
       inc (c);
       setcolor (cyan+8*(c and 1), 7+8*(c and 1));
-      COMwriteln (planetToS (n,p)+'          '+long2str(p.ships,11)+long2str(p.Production*24,11));
+      println (planetToS (n,p)+'          '+long2str(p.ships,11)+long2str(p.Production*24,11));
     end;
   end;
 end;
@@ -1490,7 +1490,7 @@ procedure drawMap (x0, y0, x1, y1: integer; cx, cy, r: longint);
       if (y >= y0) and (y <= y1) and (x >= x0) and (x + length (s) <= x1) then
         begin
           gotoxy (x, y);
-          COMWrite (s);
+          print (s);
         end;
     end;
 
@@ -1645,11 +1645,11 @@ procedure mainloop (pid: integer);
           if s[2] = ':' then
             begin
               setcolor (cyan+8,15);
-              comwrite (s[1]);
+              print (s[1]);
               setcolor (cyan,7);
               s := copy (s,2,255);
             end;
-          comwrite (s);
+          print (s);
         end;
       inc (menuzeile);
     end;
@@ -1709,17 +1709,17 @@ procedure mainloop (pid: integer);
 
         gotoxy (3, lines-2);
         if f.ships < 0 then
-          COMwrite ('Todesstern')
+          print ('Todesstern')
         else
-          COMwrite ('Anz: '+long2str(f.ships,0));
+          print ('Anz: '+long2str(f.ships,0));
 
-        COMWrite (' Pos: '+ptos(x,y)+' Ziel: '+trimplanet (f.destination,d)+' in '+
+        print (' Pos: '+ptos(x,y)+' Ziel: '+trimplanet (f.destination,d)+' in '+
         long2str(f.enter-date,0)+' h');
         gotoxy (3, lines-1);
-        ComWrite ('Kurs aendern (J/N)? ');
+        print ('Kurs aendern (J/N)? ');
 
         doit := upCase(readkey);
-        comWrite (doit);
+        print (doit);
 
         if doit = 'J' then
           begin
@@ -1760,7 +1760,7 @@ procedure mainloop (pid: integer);
       if n <> 0 then
         pid := n
       else
-        ComWrite (#8+int2str (pid, 0));
+        print (#8+int2str (pid, 0));
 
       if (pid <= 0) or (pid > planets) then
         begin
@@ -1777,7 +1777,7 @@ procedure mainloop (pid: integer);
       if range = 0 then
         begin
           range := 12;
-          comwrite (#8'12');
+          print (#8'12');
         end;
 
 
@@ -1793,14 +1793,14 @@ procedure mainloop (pid: integer);
               if c <> 0 then if waitkey = #27 then exit;
               clrscr;
               collectfleet := true;
-              COMwriteln ('     Truppen Zusammenziehen auf Planet '+planettos (pid, d));
-              COMwriteln ('     ===============================================');
-              COMwriteln ('');
-              COMwriteln ('     Name             Position      Schiffe  Prod.  Zeit  Anz. senden');
-              COMwriteln ('---------------------------------------------------------------------');
+              println ('     Truppen Zusammenziehen auf Planet '+planettos (pid, d));
+              println ('     ===============================================');
+              println ('');
+              println ('     Name             Position      Schiffe  Prod.  Zeit  Anz. senden');
+              println ('---------------------------------------------------------------------');
             end;
             inc (c);
-            COMwrite (planetToS (n,p)+'  '+long2str(p.ships,11)+long2str(p.Production*24,7)+long2str (t, 6)+'  ');
+            print (planetToS (n,p)+'  '+long2str(p.ships,11)+long2str(p.Production*24,7)+long2str (t, 6)+'  ');
             anz := input ('? ');
             if anz < 0 then
               exit;
@@ -1810,7 +1810,7 @@ procedure mainloop (pid: integer);
 
             gotoxy (58, cy);
 
-            comWriteln (long2str (anz,12));
+            println (long2str (anz,12));
             if anz > 0 then
               begin
                 f.ownername := player.name;
@@ -1854,25 +1854,25 @@ procedure mainloop (pid: integer);
     begin
       clrscr;
       setcolor (blue,7);
-      comwriteln ('-------------------------------------------------------------------------------');
+      println ('-------------------------------------------------------------------------------');
       for n := 2 to (lines-1) do
         begin
           gotoxy (1, n);
-          Comwrite ('|');
+          print ('|');
           if n < (lines -24+20) then
             begin
               gotoxy (51, n);
-              Comwrite ('|');
+              print ('|');
             end;
           gotoxy (79, n);
-          comwrite ('|');
+          print ('|');
         end;
 
       gotoxy (1, lines);
-      comwrite   ('-------------------------------------------------------------------------------');
+      print   ('-------------------------------------------------------------------------------');
 
       gotoxy (1, (lines-4));
-      comwrite   ('-------------------------------------------------------------------------------');
+      print   ('-------------------------------------------------------------------------------');
 
       restoreMap;
       with planet do
@@ -1880,9 +1880,9 @@ procedure mainloop (pid: integer);
           menuzeile := 6;
           menu ('I: Zoom in / ');
           setcolor (cyan+8,15);
-          comwrite ('O');
+          print ('O');
           setcolor (cyan,7);
-          comwrite (': Zoom out');
+          print (': Zoom out');
           menu ('V: Karte Vollbild');
           menu ('P: Planet wechseln');
           menu ('U: Planet umbenennen');
@@ -1926,14 +1926,14 @@ procedure mainloop (pid: integer);
             write ('Time left: '+int2str (dt div (60*18),-2)+':'+int2str(dt div 18 mod 60,-2));
           end;
 *)
-        comwrite ('['+int2str (dt div (60*18),-2)+':'+int2str(dt div 18 mod 60,-2)+'] Kommando?  '#8);
+        print ('['+int2str (dt div (60*18),-2)+':'+int2str(dt div 18 mod 60,-2)+'] Kommando?  '#8);
         (*
         while (bios^.Timer mod 18 = 0) and not keypressed do;
         while (bios^.Timer mod 18 <> 0) and not keypressed do;
         *)
       until keypressed;
       c := upcase (readkey);
-      comwrite (c);
+      print (c);
       if not local then
         write (' Command: ',c);
       case c of
@@ -1953,7 +1953,7 @@ procedure mainloop (pid: integer);
           end;
         'P':
           begin
-            comwrite (' - Planet wechseln');
+            print (' - Planet wechseln');
             gotoxy (3,lines-2);
             n := Input ('Neuer Planet #');
             gotoxy (3,lines-1);
@@ -2024,32 +2024,32 @@ procedure mainloop (pid: integer);
           end;
         'L':
           begin
-            ComWrite (' - Liste');
+            print (' - Liste');
             gotoxy (3, lines-2);
             setcolor (cyan+8, 15);
-            ComWrite ('M');
+            print ('M');
             setcolor (cyan, 7);
-            comwrite (': Mitspieler ');
+            print (': Mitspieler ');
 
             setcolor (cyan+8, 15);
-            ComWrite ('P');
+            print ('P');
             setcolor (cyan, 7);
-            comwrite (': Planeten ');
+            print (': Planeten ');
 
             setcolor (cyan+8, 15);
-            ComWrite ('E');
+            print ('E');
             setcolor (cyan, 7);
-            comwrite (': Eigene / ');
+            print (': Eigene / ');
 
             setcolor (cyan+8, 15);
-            ComWrite ('F');
+            print ('F');
             setcolor (cyan, 7);
-            comwrite (': feindliche Flottenverbaende? ');
+            print (': feindliche Flottenverbaende? ');
 
             c := upcase (readkey);
             if c <> #27 then
               begin
-                comwrite (c);
+                print (c);
 
                 case c of
                   'P': planetlist;
@@ -2125,7 +2125,7 @@ begin
   {$i-}
   MkDir('mutex.emp');
   if IOResult<>0 then begin
-    ComWriteLn('Spiel bereits aktiv. Bitte versuche es spaeter erneut.');
+    printLn('Spiel bereits aktiv. Bitte versuche es spaeter erneut.');
     Halt(1);
   end;
   {$i+}
