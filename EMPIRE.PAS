@@ -209,7 +209,7 @@ function ships2str (n: longint): string;
     if n >= 0 then
       ships2str := long2str (n,11)
     else
-      ships2str := ' Todesstern';
+      ships2str := ' Death star';
   end;
 
 
@@ -347,7 +347,7 @@ function waitkey: char;
     while keypressed do
       c := readkey;
     println ('');
-    print (' - Taste - ');
+    print (' - Key - ');
     waitkey := readkey;
   end;
 
@@ -562,7 +562,7 @@ var
 begin
   rewrite (planetfile);
   println ('');
-  println ('Autocreating Planets...');
+  println ('Creating universe...');
   println ('');
   for n := 1 to 999 do begin
     planet.x      := random (1000);
@@ -887,7 +887,7 @@ begin
   if not local then
     begin
       crt.clrscr;
-      writeln ('Empire is beeing played: '+paramstr(1)+' at '+paramstr (2)+ ' baud');
+      writeln ('Empire is being played by '+paramstr(1)+' at '+paramstr (2)+ ' baud');
       writeln;
       writeln ('Press ESC to abort...');
     end;
@@ -901,8 +901,7 @@ begin
 
   println ('');
   println ('');
-  println ('Achtung: Ab jetzt Zeitbegrenzung nur noch 6 Stunden!');
-  println ('         Terminalprogramm muss ANSI-Steuerzeichen verstehen!');
+  println ('Attention: Timeout is now 6 hours. Terminal needs VT100/ANSI support.');
   println ('');
   println ('');
   println ('Login Date: '+dtos(newdate));
@@ -931,7 +930,7 @@ begin
       p.production := 5;
       if p.owner <> 0 then begin
         openMsg (p.owner, planetToS (pn, p));
-        writeMsg ('LETZTE MELDUNG - Feindliche Rebellen haben die Kontrolle uebernommen.');
+        writeMsg ('LATEST NEWS - Enemy rebels took control.');
         closeMsg;
       end;
       p.owner := id;
@@ -940,7 +939,7 @@ begin
       saveplayer (id, player);
 
       openMsg (p.owner, planetToS (pn, p));
-      writeMsg ('Unsere Rebellen haben die Kontrolle uebernommen.');
+      writeMsg ('Our rebels took control.');
       closeMsg;
 
       login := true;
@@ -951,8 +950,8 @@ begin
 
       if newdate - player.last < 6 then
         begin
-          print ('Zugriff auf die Flotte verweigert'+#13#10);
-          print ('Erneuter Zugriff in '+int2str (6-newdate+player.last,2)+' Stunden'+#13#10);
+          print ('Access to galactic supercomputer rejected.'+#13#10);
+          print ('Please try again '+int2str (6-newdate+player.last,2)+' hours'+#13#10);
           login := false;
           id := 0;
         end
@@ -962,7 +961,7 @@ begin
           println ('Last login: '+dtos(player.last));
           println ('');
           println ('');
-          println ('Ich erwarte Ihre Anweisungen, Kommandant '+player.name+'.');
+          println ('Awaiting your orders, commmander '+player.name+'.');
         end;
       c := waitkey;
     end;
@@ -991,16 +990,16 @@ begin
           if c <> 0 then if waitkey = #27 then exit;
           clrscr;
           if eigen then begin
-            println ('     Liste aller eigenen Flottenverbaende');
+            println ('     List of my fleets');
             println ('     ===================================');
             println ('');
-            println ('  ID Position Start Ziel                            Dauer    Schiffe');
+            println ('  ID Position Origin Target                            ETA/h    Ships  ');
             println ('-----------------------------------------------------------------------');
           end else begin
-            println ('     Liste feindlicher Flottenverbaende');
+            println ('     List of enemy fleets');
             println ('     =================================');
             println ('');
-            println ('  ID Position Ziel                            Dauer    Schiffe Kommandant');
+            println ('  ID Position Target                            ETA/h    Ships   Commander');
             println ('------------------------------------------------------------------------------');
           end;
         end;
@@ -1038,7 +1037,7 @@ begin
     clrscr;
     println ('');
     println ('');
-    println ('Keine Flotten unterwegs');
+    println ('No fleets in travel');
   end;
 
   setcolor (cyan, 7);
@@ -1066,7 +1065,7 @@ begin
         if (c <> 0) then
           k := waitkey;
         clrscr;
-        println ('     Mitteilungen / Nachrichten');
+        println ('     Messages / news');
         println ('     ==========================');
         println ('');
       end;
@@ -1115,7 +1114,7 @@ var
   s: string;
   b: boolean;
 begin
-  n := input (' - Planet Umbenennen; ID: ');
+  n := input (' - Rename planet; ID: ');
   if n = 0 then
     begin
       print (#8+int2str (n0,0));
@@ -1126,19 +1125,19 @@ begin
 
   if (n <= 0) or (n > planets) then
     begin
-      error ('Planet existiert nicht!');
+      error ('Invalid planet!');
       exit;
     end;
 
   loadplanet (n, p);
   if p.owner <> id then
     begin
-      error ('Planet steht nicht unter Ihrer Kontrolle!');
+      error ('Not your planet!');
       exit;
     end;
 
 
-  print ('Neuer Name: ');
+  print ('New name: ');
   b := instr (s,16);
   if s <> '' then
     begin
@@ -1159,18 +1158,18 @@ var n,nn,paz,pfl,ppr,faz,ffl: longint;
   k: char;
 begin
   clrscr;
-  println ('     Statistische Informationen');
+  println ('     Statistical information');
   println ('     ==========================');
   println ('');
   println ('');
   if era = false then begin
-    print ('                    Kommandant: ');
+    print ('                    Commander: ');
     b := instr (s,20);
     println ('');
     println  ('');
     n := playerId (s);
     if n = 0 then begin
-      println (#7'Kommandant existiert nicht!');
+      println (#7'Invalid commander!');
       exit;
     end;
   end else n := id;
@@ -1188,10 +1187,10 @@ begin
     end;
   end;
 
-  println ('Anzahl kontrollierter Planeten: '+int2str (paz,0));
-  println ('                  Gesamtanteil: '+int2str (paz * 100 div 1000,0)+' %');
-  println ('      Stationierte Raumschiffe: '+long2str(pfl,0));
-  println ('      Gesamtproduktion pro Tag: '+long2str (ppr * 24,0));
+  println ('         Planets under control: '+int2str (paz,0));
+  println ('                    Percentage: '+int2str (paz * 100 div 1000,0)+' %');
+  println ('          Total resident ships: '+long2str(pfl,0));
+  println ('        Ships produced per day: '+long2str (ppr * 24,0));
   println ('');
 
   faz := 0;
@@ -1205,14 +1204,14 @@ begin
     end;
   end;
 
-  println ('            Anzahl Raumflotten: '+long2str(faz,0));
-  println ('           Bewegte Raumschiffe: '+long2str (ffl,0));
+  println ('              Number of fleets: '+long2str(faz,0));
+  println ('               Ships in travel: '+long2str (ffl,0));
   println ('');
-  println ('         Raumschiffe insgesamt: '+long2str(pfl+ffl,0));
+  println ('                   Total ships: '+long2str(pfl+ffl,0));
   println ('');
 
   if era and (pfl + ffl = 0) then begin
-    println ('Leider verloren ... Kommandant geloescht!');
+    println ('Sorry, you lost ... commander deleted!');
     Player.name := '';
   end;
 
@@ -1231,7 +1230,7 @@ begin
       if c mod (lines-7) = 0 then begin
         if c <> 0 then if waitkey = #27 then exit;
         clrscr;
-        println ('     Mitspieler');
+        println ('     Commanders');
         println ('     ==========');
         println ('');
       end;
@@ -1254,10 +1253,10 @@ begin
       if c mod (lines-9) = 0 then begin
         if c <> 0 then if waitkey = #27 then exit;
         clrscr;
-        println ('     Kontrollierte Planeten');
+        println ('     Planets under control');
         println ('     ======================');
         println ('');
-        println ('     Name             Position              Schiffe Produktion');
+        println ('     Name             Position              Ships   Production');
         println ('--------------------------------------------------------------');
       end;
       inc (c);
@@ -1459,7 +1458,7 @@ procedure mainloop (pid: integer);
           menu ('#'+int2str (pid,-3)+' '+Name+copy ('                  ', 1,20-length (name)));
           menu ('');
           setcolor (cyan,7);
-          menu ('Position    Schiffe Prod.');
+          menu ('Position    Ships   Prod.');
           setcolor (8+cyan,15);
           menu (ptos (x, y)+long2str (ships,11)+int2str (production*24,6));
           setcolor (cyan,7);
@@ -1477,16 +1476,16 @@ procedure mainloop (pid: integer);
       s, d: planetrec;
       doit, c: char;
     begin
-      n := input (' - Raumflotten-Informationen; ID: ');
+      n := input (' - Fleet information; ID: ');
       gotoxy (3, lines-2);
       if (n = 0) or (n > fleets) then begin
-        error ('Raumflotte mit dieser ID existiert nicht!');
+        error ('Invalid fleet!');
         exit;
       end;
 
       loadfleet (n, f);
       if (f.owner <> id) or (f.ships = 0) then begin
-        error ('Raumflotte mit dieser ID existiert nicht!');
+        error ('Invalid fleet!');
         exit;
       end;
       loadplanet (f.source, s);
@@ -1502,22 +1501,22 @@ procedure mainloop (pid: integer);
 
         gotoxy (3, lines-2);
         if f.ships < 0 then
-          print ('Todesstern')
+          print ('Death star')
         else
-          print ('Anz: '+long2str(f.ships,0));
+          print ('Cnt: '+long2str(f.ships,0));
 
-        print (' Pos: '+ptos(x,y)+' Ziel: '+trimplanet (f.destination,d)+' in '+
+        print (' Pos: '+ptos(x,y)+' Dest: '+trimplanet (f.destination,d)+' in '+
         long2str(f.enter-date,0)+' h');
         gotoxy (3, lines-1);
-        print ('Kurs aendern (J/N)? ');
+        print ('Change course (Y/N)? ');
 
         doit := upCase(readkey);
         print (doit);
 
-        if doit = 'J' then
+        if doit = 'Y' then
           begin
             gotoxy (3, lines-1);
-            nd := input ('ID Neuer Zielplanet: #');
+            nd := input ('ID of new destination: #');
             if (nd>0) and (nd <= planets) and (nd <> f.destination) then
               begin
                 loadPlanet (nd, d);
@@ -1530,9 +1529,9 @@ procedure mainloop (pid: integer);
                 savefleet (n, f);
               end
             else
-              error ('Ungueltige Zielangabe!              ');
+              error ('Invalid destination!              ');
           end;
-      until doit <> 'J';
+      until doit <> 'Y';
 
       restoreMap;
     end;
@@ -1549,7 +1548,7 @@ procedure mainloop (pid: integer);
     begin
       collectFleet := false;
 
-      n := input (' - Truppen zusammenziehen auf Planet #');
+      n := input (' - Assemble fleet  #');
       if n <> 0 then
         pid := n
       else
@@ -1557,14 +1556,14 @@ procedure mainloop (pid: integer);
 
       if (pid <= 0) or (pid > planets) then
         begin
-          error ('Ungueltige Eingabe');
+          error ('Invalid planet');
           exit;
         end;
 
       loadplanet (pid, d);
 
       gotoXY (3, lines-2);
-      range := input ('Maximale Entfernung (Stunden): ');
+      range := input ('Maximum distance (hours): ');
       if range < 0 then
         exit;
       if range = 0 then
@@ -1586,10 +1585,10 @@ procedure mainloop (pid: integer);
               if c <> 0 then if waitkey = #27 then exit;
               clrscr;
               collectfleet := true;
-              println ('     Truppen Zusammenziehen auf Planet '+planettos (pid, d));
+              println ('     Assemble fleet in planet '+planettos (pid, d));
               println ('     ===============================================');
               println ('');
-              println ('     Name             Position      Schiffe  Prod.  Zeit  Anz. senden');
+              println ('     Name             Position      Ships    Prod.  Time  Num. to snd');
               println ('---------------------------------------------------------------------');
             end;
             inc (c);
@@ -1631,7 +1630,7 @@ procedure mainloop (pid: integer);
       end;
 
       if c = 0 then
-        error ('Keine eigenen Planeten mit Truppen in Reichweite')
+        error ('None of your planets within that distance!')
       else
         k := waitkey;
 
@@ -1671,22 +1670,22 @@ procedure mainloop (pid: integer);
       with planet do
         begin
           menuzeile := 6;
-          menu ('I: Zoom in / ');
+          menu ('+: Zoom in / ');
           setcolor (cyan+8,15);
-          print ('O');
+          print ('-');
           setcolor (cyan,7);
           print (': Zoom out');
-          menu ('V: Karte Vollbild');
-          menu ('P: Planet wechseln');
-          menu ('U: Planet umbenennen');
-          menu ('S: Raumflotte senden');
-          menu ('T: Todesstern...');
-          menu ('L: Liste...');
-          menu ('Z: Flotten zusammenziehen');
-          menu ('N: Nachricht uebermitteln');
-          menu ('A: Anzeige Farbe / 50 Z.');
-          menu ('H: Hilfe');
-          menu ('X: Ende');
+          menu ('M: Fullscreen map');
+          menu ('P: Select planet');
+          menu ('R: Rename planet');
+          menu ('F: Send fleet');
+          menu ('C: Collect ships');
+          menu ('D: Death star...');
+          menu ('L: List...');
+          menu ('W: Write message');
+          menu ('T: Terminal mode');
+          menu ('H: Help');
+          menu ('X: Exit');
         end;
     end;
 
@@ -1712,20 +1711,20 @@ procedure mainloop (pid: integer);
 
       repeat
         gotoxy (3,lines-3);
-        print ('['+int2str (dt div (60*18),-2)+':'+int2str(dt div 18 mod 60,-2)+'] Kommando?  '#8);
+        print ('['+int2str (dt div (60*18),-2)+':'+int2str(dt div 18 mod 60,-2)+'] Command?  '#8);
       until keypressed;
       c := upcase (readkey);
       print (c);
       if not local then
         write (' Command: ',c);
       case c of
-        'I':
+        '+':
           if radius > 1 then
             begin
               dec (radius);
               restoreMap;
             end;
-        'O':
+        '-':
           begin
             if radius < 7 then
               begin
@@ -1735,17 +1734,17 @@ procedure mainloop (pid: integer);
           end;
         'P':
           begin
-            print (' - Planet wechseln');
+            print (' - Change planet');
             gotoxy (3,lines-2);
-            n := Input ('Neuer Planet #');
+            n := Input ('New planet #');
             gotoxy (3,lines-1);
             if (n <= 0) or (n > planets) then
-              error ('Ungueltige Angabe'#7)
+              error ('Invalid value'#7)
             else
               begin
                 loadplanet (n, planet);
                 if planet.owner <> id then
-                  error ('Planet steht nicht unter Ihrer Kontrolle!')
+                  error ('Not your planet!')
                 else
                   begin
                     pid := n;
@@ -1754,18 +1753,18 @@ procedure mainloop (pid: integer);
                 loadPlanet (pid, planet);
               end;
           end;
-        'U': renamePlanet (pid);
-        'V':
+        'R': renamePlanet (pid);
+        'M':
           begin
             drawMap (1,1,79, lines, planet.x, planet.y, radius);
             repeat
               case upcase (readkey) of
-                'O':
+                '+':
                   if radius < 7 then
                     inc(radius)
                   else
                     goto label_continue;
-                'I':
+                '-':
                   if radius > 1 then
                     dec (radius)
                   else
@@ -1783,50 +1782,50 @@ procedure mainloop (pid: integer);
 
             restoreAll
           end;
-        'S':
+        'F':
           begin
             if sendfleet (pid, false) then
               restoreMap;
           end;
-        'T':
+        'D':
           begin
             if sendfleet (pid, true) then
               restoreMap;
           end;
-        'H': error ('Hilfedatei nicht gefunden!');
+        'H': error ('Help file not found!');
         'X': exit;
 
-        'Z':
+        'C':
           if collectFleet (pid) then
             restoreall;
-        'N':
+        'W':
           begin
             sendText;
             restoreAll;
           end;
         'L':
           begin
-            print (' - Liste');
+            print (' - List');
             gotoxy (3, lines-2);
             setcolor (cyan+8, 15);
-            print ('M');
+            print ('C');
             setcolor (cyan, 7);
-            print (': Mitspieler ');
+            print (': Commanders ');
 
             setcolor (cyan+8, 15);
             print ('P');
             setcolor (cyan, 7);
-            print (': Planeten ');
-
-            setcolor (cyan+8, 15);
-            print ('E');
-            setcolor (cyan, 7);
-            print (': Eigene / ');
+            print (': Planets ');
 
             setcolor (cyan+8, 15);
             print ('F');
             setcolor (cyan, 7);
-            print (': feindliche Flottenverbaende? ');
+            print (': Fleets ');
+
+            setcolor (cyan+8, 15);
+            print ('E');
+            setcolor (cyan, 7);
+            print (': Enemy fleets ? ');
 
             c := upcase (readkey);
             if c <> #27 then
@@ -1835,14 +1834,14 @@ procedure mainloop (pid: integer);
 
                 case c of
                   'P': planetlist;
-                  'M': mitspieler;
-                  'E': fleetlist (true);
-                  'F': fleetlist (false);
+                  'C': mitspieler;
+                  'F': fleetlist (true);
+                  'E': fleetlist (false);
                   else c := #27;
                 end;
 
                 if c = #27 then
-                  error ('Ungueltiger Befehl')
+                  error ('Invalid command!')
                 else
                   begin
                     k := waitkey;
@@ -1905,7 +1904,7 @@ begin
   {$i-}
   MkDir('mutex.emp');
   if IOResult<>0 then begin
-    printLn('Spiel bereits aktiv. Bitte versuche es spaeter erneut.');
+    printLn('Galactic supercomputer already in use. Please try again later.');
     Halt(1);
   end;
   {$i+}
