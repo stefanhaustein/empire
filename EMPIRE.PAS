@@ -887,9 +887,10 @@ begin
   if not local then
     begin
       crt.clrscr;
-      writeln ('Empire is being played by '+paramstr(1)+' at '+paramstr (2)+ ' baud');
-      writeln;
-      writeln ('Press ESC to abort...');
+      println ('Empire is being played by '+paramstr(1)+' at '+paramstr (2)+ ' baud');
+      println ('');
+      println ('Press ESC to abort...');
+      println ('');
     end;
 
   id := 0;
