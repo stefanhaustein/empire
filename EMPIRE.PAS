@@ -1760,12 +1760,12 @@ procedure mainloop (pid: integer);
             drawMap (1,1,79, lines, planet.x, planet.y, radius);
             repeat
               case upcase (readkey) of
-                '+':
+                '-':
                   if radius < 7 then
                     inc(radius)
                   else
                     goto label_continue;
-                '-':
+                '+':
                   if radius > 1 then
                     dec (radius)
                   else
@@ -1855,7 +1855,7 @@ procedure mainloop (pid: integer);
             statistik (false);
             restoreAll;
           end;}
-        'A':
+        'T':
           begin
             if lines = 24 then
               begin
