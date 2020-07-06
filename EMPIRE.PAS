@@ -4,24 +4,27 @@ uses
   crt,
   dos;
 
+type
+  Str255 = String[255];
+
 var
   Local: boolean;
   mono: boolean;
   Color: byte;
-  cmd1, cmd2: string;
+  cmd1, cmd2: Str255;
   cx, cy, Lines: integer;
 
 (* --- Start of missing functions --- *)
 
-procedure fatal(s: string);
+procedure fatal(s: Str255);
 begin
   WriteLn(s);
   Halt(1);
 end;
 
-function long2str(l: longint; n: integer): string;
+function long2str(l: longint; n: integer): Str255;
 var
-  s: string;
+  s: Str255;
   c: char;
 begin
   if (n < 0) then
@@ -43,9 +46,9 @@ begin
   long2str := s;
 end;
 
-function int2str(i: integer; n: integer): string;
+function int2str(i: integer; n: integer): Str255;
 var
-  s: string;
+  s: Str255;
   c: char;
 begin
   if (n < 0) then
@@ -67,7 +70,7 @@ begin
   int2str := s;
 end;
 
-function alltrim(s: string): string;
+function alltrim(s: Str255): Str255;
 begin
   while ((length(s) > 0) and (s[1] <= ' ')) do
   begin
@@ -82,7 +85,7 @@ begin
   alltrim := s;
 end;
 
-function iif(b: boolean; s: string; t: string): string;
+function iif(b: boolean; s: Str255; t: Str255): Str255;
 begin
   if b then
     iif := s
@@ -92,7 +95,7 @@ end;
 
 (* --- End of missing functions --- *)
 
-procedure print(s: string);
+procedure print(s: Str255);
 begin
   if s <> '' then
   begin
@@ -101,7 +104,7 @@ begin
   end;
 end;
 
-procedure println(s: string);
+procedure println(s: Str255);
 begin
   print(s);
   print(#13#10);
@@ -113,9 +116,9 @@ procedure SetColor(i, j: integer);
 var
   fg, bg: integer;
   bold: char;
-  blink: string;
+  blink: Str255;
 const
-  table: string = '04261537';
+  table: Str255 = '04261537';
 begin
   if mono then
     i := j;
@@ -180,7 +183,7 @@ var
   fleetFile: file of fleetRec;
   player: playerRec;
   id, date, newdate: longint;
-  mark: string;
+  mark: Str255;
   timer, dt, lastdisp: longint;
   msg: Text;
 
@@ -220,7 +223,7 @@ begin
   halt(0);
 end;
 
-function ships2str(n: longint): string;
+function ships2str(n: longint): Str255;
 begin
   if n >= 0 then
     ships2str := long2str(n, 11)
@@ -228,9 +231,9 @@ begin
     ships2str := ' Death star';
 end;
 
-function ptos(x, y: longint): string;
+function ptos(x, y: longint): Str255;
 var
-  sx, sy: string;
+  sx, sy: Str255;
 begin
   str(x mod 100: 2, sx);
   str(y mod 100: 2, sy);
@@ -243,17 +246,17 @@ begin
   cutname := copy(s + '                ', 1, 16);
 end;
 
-function planetToS(n: longint; p: planetRec): string;
+function planetToS(n: longint; p: planetRec): Str255;
 var
-  s: string;
+  s: Str255;
 begin
   str(n: 3, s);
   planetToS := '#' + s + ' ' + cutname(p.Name) + ' ' + ptos(p.x, p.y);
 end;
 
-function trimPlanet(n: longint; p: planetRec): string;
+function trimPlanet(n: longint; p: planetRec): Str255;
 var
-  s: string;
+  s: Str255;
 begin
   str(n: 3, s);
   TrimPlanet := '#' + alltrim(s) + ' ' + alltrim(cutname(p.Name)) + ' ' + ptos(p.x, p.y);
@@ -367,7 +370,7 @@ begin
   waitkey := readkey;
 end;
 
-function instr(var s: string; ml: integer): boolean;
+function instr(var s: Str255; ml: integer): boolean;
 var
   c: char;
 begin
@@ -392,9 +395,9 @@ begin
   instr := c = #13;
 end;
 
-function upStr(s: string): string;
+function upStr(s: Str255): Str255;
 var
-  d: string;
+  d: Str255;
   i: byte;
 begin
   d := '';
@@ -403,22 +406,22 @@ begin
   upStr := d;
 end;
 
-function itos(i: longint): string;
+function itos(i: longint): Str255;
 var
-  s: string;
+  s: Str255;
 begin
   str(i, s);
   itos := s;
 end;
 
-function dtos(d: longint): string;
+function dtos(d: longint): Str255;
 begin
   d := d + 16;
   dtos := itos(d div 24 mod 32) + '.' + itos(d div (24 * 32) mod 12) + '. ' +
     itos(d mod 24) + ':00';
 end;
 
-function input(s: string): longint;
+function input(s: Str255): longint;
 var
   i: longint;
   err: integer;
@@ -441,7 +444,7 @@ begin
   input := i;
 end;
 
-procedure error(s: string);
+procedure error(s: Str255);
 var
   c: char;
 begin
@@ -551,7 +554,7 @@ end;
 var
   dest: longint;
 
-procedure openMsg(d: longint; s: string);
+procedure openMsg(d: longint; s: Str255);
 begin
   dest := d;
 
@@ -572,7 +575,7 @@ begin
   end;
 end;
 
-procedure writeMsg(s: string);
+procedure writeMsg(s: Str255);
 begin
   if dest > 1 then
     writeln(msg, s);
@@ -926,7 +929,7 @@ end;
 function login: boolean;
 
 var
-  Name, password, number: string;
+  Name, password, number: Str255;
   error: integer;
   pn: longint;
   p: planetrec;
@@ -1120,7 +1123,7 @@ var
 
 procedure displaymessages;
 var
-  m: string;
+  m: Str255;
   n: longint;
   c: longint;
   k: char;
@@ -1156,7 +1159,7 @@ end;
 
 procedure SendText;
 var
-  s, t: string;
+  s, t: Str255;
   n: longint;
   b: boolean;
 begin
@@ -1188,7 +1191,7 @@ procedure renamePlanet(n0: integer);
 var
   n: integer;
   p: planetrec;
-  s: string;
+  s: Str255;
   b: boolean;
 begin
   n := input(' - Rename planet; ID: ');
@@ -1229,7 +1232,7 @@ var
   n, nn, paz, pfl, ppr, faz, ffl: longint;
   p: planetrec;
   f: fleetrec;
-  s: string;
+  s: Str255;
   b: boolean;
   k: char;
 begin
@@ -1368,7 +1371,7 @@ const
 var
   dx, dy: longint;
 
-  procedure mapWrite(x, y: longint; s: string);
+  procedure mapWrite(x, y: longint; s: Str255);
   begin
     x := x + x0 + dx;
     y := y + y0 + dy;
@@ -1390,7 +1393,7 @@ var
   l: longint;
   x, y, xf, yf: longint;
   p, d: planetRec;
-  s: string;
+  s: Str255;
   f: fleetrec;
   bright: integer;
 
@@ -1523,7 +1526,7 @@ var
   radius: longint;
   menuZeile: integer;
 
-  procedure menu(s: string);
+  procedure menu(s: Str255);
   begin
     if s <> '' then
     begin
