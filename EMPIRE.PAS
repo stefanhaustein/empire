@@ -93,6 +93,28 @@ begin
     iif := t;
 end;
 
+function EpochDay(Y, M, D: Integer): Integer;
+const
+  DaysGone: array[1..12] of Integer = (0,31,59,90,120,151,181,212,243,273,304,334);
+var
+  LeapDays: Integer;
+begin
+  LeapDays := (Y-1-1968) div 4 - (Y-1-1900) div 100 + (Y-1-1600) div 400;
+
+  if ((M>2) and (Y mod 4=0) and ((Y mod 100<>0) or (Y mod 400=0))) then
+    LeapDays := LeapDays + 1;
+
+  EpochDay := (Y-1970)*365 + LeapDays + DaysGone[M] + D;
+end;
+
+function HoursPassed(FromDay, FromHour, ToDay, ToHour: Integer): Integer;
+begin
+  if (ToDay > FromDay) or (ToHour > FromHour) then
+    HoursPassed := (ToDay - FromDay) * 24 + ToHour - FromHour
+  else
+    HoursPassed := 0;
+end;
+
 (* --- End of missing functions --- *)
 
 procedure print(s: Str255);
@@ -2023,7 +2045,9 @@ begin
   getDate(y, mo, d, dow);
   getTime(h, m, s, s100);
 
-  newDate := y * 32 * 12 * 24 + mo * 32 * 24 + d * 24 + h;
+  (* TODO Start fixing date handling here *)
+  newDate := EpochDay(y, m, d) * 24 + h;
+  (* newHour := ... *)
 
   Assign(playerFile, 'player.emp');
   Assign(planetFile, 'planet.emp');
