@@ -106,7 +106,7 @@ begin
   print(s);
   print(#13#10);
   cx := 1;
-  Inc(cy);
+  Inc(cy, 1);
 end;
 
 procedure SetColor(i, j: integer);
@@ -1070,7 +1070,7 @@ begin
               '------------------------------------------------------------------------------');
           end;
         end;
-        Inc(c);
+        Inc(c, 1);
 
         x := f.sx - (f.sx - d.x) * (f.start - date) div (f.start - f.enter);
         y := f.sy - (f.sy - d.y) * (f.start - date) div (f.start - f.enter);
@@ -1146,7 +1146,7 @@ begin
         println('');
       end;
       println(m);
-      Inc(c);
+      Inc(c, 1);
     end;
     rewrite(msg);
   end;
@@ -1263,7 +1263,7 @@ begin
     loadplanet(nn, p);
     if p.owner = n then
     begin
-      Inc(paz);
+      Inc(paz, 1);
       Inc(pfl, p.ships);
       Inc(ppr, p.production);
     end;
@@ -1283,7 +1283,7 @@ begin
     loadfleet(nn, f);
     if ((f.owner = n) and (f.ships <> 0)) then
     begin
-      Inc(faz);
+      Inc(faz, 1);
       Inc(ffl, abs(f.ships));
     end;
   end;
@@ -1324,7 +1324,7 @@ begin
         println('     ==========');
         println('');
       end;
-      Inc(c);
+      Inc(c, 1);
       println(chr(64 + c) + ': ' + cutname(p.Name) + '           ' + copy(dtos(p.last), 1, 5));
     end;
   end;
@@ -1353,7 +1353,7 @@ begin
         println('     Name             Position              Ships   Production');
         println('--------------------------------------------------------------');
       end;
-      Inc(c);
+      Inc(c, 1);
       setcolor(cyan + 8 * (c and 1), 7 + 8 * (c and 1));
       println(planetToS(n, p) + '          ' + long2str(p.ships, 11) +
         long2str(p.Production * 24, 11));
@@ -1541,7 +1541,7 @@ var
       end;
       print(s);
     end;
-    Inc(menuzeile);
+    Inc(menuzeile, 1);
   end;
 
   procedure restoreInfo;
@@ -1695,7 +1695,7 @@ var
           println(
             '---------------------------------------------------------------------');
         end;
-        Inc(c);
+        Inc(c, 1);
         print(planetToS(n, p) + '  ' + long2str(p.ships, 11) + long2str(
           p.Production * 24, 7) + long2str(t, 6) + '  ');
         anz := input('? ');
@@ -1822,14 +1822,14 @@ begin
       '+':
         if radius > 1 then
         begin
-          Dec(radius);
+          Dec(radius, 1);
           restoreMap;
         end;
       '-':
       begin
         if radius < 7 then
         begin
-          Inc(radius);
+          Inc(radius, 1);
           restoreMap;
         end;
       end;
@@ -1862,12 +1862,12 @@ begin
           case upcase(readkey) of
             '-':
               if radius < 7 then
-                Inc(radius)
+                Inc(radius, 1)
               else
                 goto label_continue;
             '+':
               if radius > 1 then
-                Dec(radius)
+                Dec(radius, 1)
               else
                 goto label_continue;
             else
