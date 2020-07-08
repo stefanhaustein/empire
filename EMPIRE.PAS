@@ -157,7 +157,7 @@ type
     production: Integer;      (* Ships per hour, should this be Real?  *)
     ships: Real;              (* Ships, either Real or always < 32K    *)
     owner,                    (* Integer                               *)
-    x, y: longint;            (* Integer                               *)
+    x, y: Integer;            (* Integer                               *)
     ownerName: str16;         (* Isn't this redundant?                 *)
     last: longint;            (* Last access timestamp, should be Real *)
   end;
@@ -166,11 +166,11 @@ type
     warning: boolean;
     ships: Real;              (* Ships in fleet. Make this Real?       *)
     start,                    (* Depart timestamp, should be Real      *)
-    enter,                    (* Arrive timestamp, should be Real      *)
+    enter: LongInt;           (* Arrive timestamp, should be Real      *)
     Source,                   (* Origin planet, Integer                *)
     sx, sy,                   (* Current position? Anyway, Integer     *)
     destination,              (* Target planet, Integer                *)
-    owner: longint;           (* Integer                               *)
+    owner: Integer;           (* Integer                               *)
     ownerName: str16;         (* Isn't this redundant?                 *)
   end;
 
@@ -190,19 +190,19 @@ var
   msg: Text;
 
 
-procedure savePlayer(n: longint; var r: playerrec);
+procedure savePlayer(n: Integer; var r: playerrec);
 begin
   seek(playerfile, n - 1);
   Write(playerfile, r);
 end;
 
-procedure savePlanet(n: longint; var r: planetrec);
+procedure savePlanet(n: Integer; var r: planetrec);
 begin
   seek(planetfile, n - 1);
   Write(planetfile, r);
 end;
 
-function traveltime(x0, y0, x1, y1: longint): longint;
+function traveltime(x0, y0, x1, y1: Integer): longint;
 begin
   traveltime := round(sqrt(sqr(x0 - x1) + sqr(y0 - y1))) div 12 + 1;
 end;
@@ -235,7 +235,7 @@ begin
 end;
 *)
 
-function ptos(x, y: longint): Str255;
+function ptos(x, y: Integer): Str255;
 var
   sx, sy: Str255;
 begin
@@ -250,7 +250,7 @@ begin
   cutname := copy(s + '                ', 1, 16);
 end;
 
-function planetToS(n: longint; p: planetRec): Str255;
+function planetToS(n: Integer; p: planetRec): Str255;
 var
   s: Str255;
 begin
@@ -258,7 +258,7 @@ begin
   planetToS := '#' + s + ' ' + cutname(p.Name) + ' ' + ptos(p.x, p.y);
 end;
 
-function trimPlanet(n: longint; p: planetRec): Str255;
+function trimPlanet(n: Integer; p: planetRec): Str255;
 var
   s: Str255;
 begin
@@ -463,49 +463,49 @@ begin
   c := readkey;
 end;
 
-procedure loadPlanet(n: longint; var r: planetrec);
+procedure loadPlanet(n: Integer; var r: planetrec);
 begin
   seek(planetfile, n - 1);
   Read(planetfile, r);
 end;
 
-function Planets: longint;
+function Planets: Integer;
 begin
   planets := filesize(planetfile);
 end;
 
-procedure loadPlayer(n: longint; var r: playerrec);
+procedure loadPlayer(n: Integer; var r: playerrec);
 begin
   seek(playerfile, n - 1);
   Read(playerfile, r);
 end;
 
-function Players: longint;
+function Players: Integer;
 begin
   players := filesize(playerfile);
 end;
 
-procedure loadfleet(n: longint; var r: fleetrec);
+procedure loadfleet(n: Integer; var r: fleetrec);
 begin
   seek(fleetfile, n - 1);
   Read(fleetfile, r);
 end;
 
-procedure savefleet(n: longint; var r: fleetrec);
+procedure savefleet(n: Integer; var r: fleetrec);
 begin
   seek(fleetfile, n - 1);
   Write(fleetfile, r);
 end;
 
-function fleets: longint;
+function fleets: Integer;
 begin
   fleets := filesize(fleetfile);
 end;
 
-function PlayerID(s: str16): longint;
+function PlayerID(s: str16): Integer;
 var
   p: playerRec;
-  n: longint;
+  n: Integer;
 begin
   s := upstr(s);
   for n := 1 to players do
@@ -521,9 +521,9 @@ begin
   PlayerID := 0;
 end;
 
-function FreePlayer: longint;
+function FreePlayer: Integer;
 var
-  n: longint;
+  n: Integer;
   p: playerrec;
 begin
   for n := 1 to players do
@@ -538,9 +538,9 @@ begin
   FreePlayer := players + 1;
 end;
 
-function FreeFleet: longint;
+function FreeFleet: Integer;
 var
-  n: longint;
+  n: Integer;
   p: FleetRec;
 begin
   for n := 1 to fleets do
@@ -558,7 +558,7 @@ end;
 var
   dest: longint;
 
-procedure openMsg(d: longint; s: Str255);
+procedure openMsg(d: Integer; s: Str255);
 begin
   dest := d;
 
@@ -594,7 +594,7 @@ end;
 procedure AutoCreatePlanets;
 var
   planet: planetRec;
-  n: longint;
+  n: Integer;
 
 begin
   rewrite(planetfile);
@@ -653,7 +653,7 @@ begin
 end;
 *)
 
-procedure workPlanet(n: longint);
+procedure workPlanet(n: Integer);
 var
   dt: longint;
   p: planetrec;
@@ -671,7 +671,7 @@ end;
 
 procedure planetwork;
 var
-  n: longint;
+  n: Integer;
 begin
   for n := 1 to planets do
     workPlanet(n);
@@ -682,8 +682,8 @@ var
   p: planetrec;
   f, f2: fleetrec;
   oriP, oriF: Real;
-  n, fl, Next, i, saveDate: longint;
-
+  Next, saveDate: longint;
+  n, i, fl: Integer;
 begin
   fl := fleets;
 
@@ -828,12 +828,13 @@ begin
   date := newdate;
 end;
 
-function sendFleet(s: integer; todesstern: boolean): boolean;
+function sendFleet(s: Integer; todesstern: boolean): boolean;
 var
-  s2, d, delta, costs, time: longint;
+  delta, costs, time: longint;
   p1, p2: planetRec;
   f: fleetRec;
   n: Real;
+  s2, d: Integer;
 begin
   sendfleet := False;
 
@@ -1035,10 +1036,10 @@ end;
 
 procedure fleetList(eigen: boolean);
 var
-  n, x, y, nd, c: longint;
+  (* nd: longint; *)
   f: fleetrec;
   s, d: planetrec;
-  h: integer;
+  x, y, n, h, c: integer;
   dt: longint;
 begin
   c := 0;
@@ -1135,8 +1136,8 @@ var
 procedure displaymessages;
 var
   m: Str255;
-  n: longint;
-  c: longint;
+  (* n: longint; *)
+  c: Integer;
   k: char;
 
 begin
@@ -1171,7 +1172,7 @@ end;
 procedure SendText;
 var
   s, t: Str255;
-  n: longint;
+  n: Integer;
   b: boolean;
 begin
   clrscr;
@@ -1240,13 +1241,13 @@ end;
 
 procedure statistik(era: boolean);
 var
-  n, nn, paz, ppr, faz: longint;
+  n, nn, paz, faz: Integer;
   p: planetrec;
   f: fleetrec;
   s: Str255;
   b: boolean;
   k: char;
-  pfl, ffl: Real;
+  pfl, ffl, ppr: Real;
 begin
   clrscr;
   println('     Statistical information');
@@ -1287,7 +1288,7 @@ begin
   println('         Planets under control: ' + Int2Str(paz, 0));
   println('                    Percentage: ' + Real2Str(paz * 100 / 1000, 0) + ' %');
   println('          Total resident ships: ' + Real2Str(pfl, 0));
-  println('        Ships produced per day: ' + Int2Str(ppr * 24, 0));
+  println('        Ships produced per day: ' + Real2Str(ppr * 24, 0));
   println('');
 
   faz := 0;
@@ -1320,7 +1321,7 @@ end;
 
 procedure mitspieler;
 var
-  n, c: longint;
+  n, c: Integer;
   p: playerrec;
 begin
   c := 0;
@@ -1347,7 +1348,7 @@ end;
 
 procedure planetlist;
 var
-  n, c: longint;
+  n, c: Integer;
   p: planetrec;
 begin
   c := 0;
@@ -1376,14 +1377,14 @@ begin
   end;
 end;
 
-procedure drawMap(x0, y0, x1, y1: integer; cx, cy, r: longint);
+procedure drawMap(x0, y0, x1, y1, cx, cy, r: integer);
 const
   radius: array[1..7] of integer = (1, 2, 3, 5, 8, 12, 16);
 
 var
-  dx, dy: longint;
+  dx, dy: Integer;
 
-  procedure mapWrite(x, y: longint; s: Str255);
+  procedure mapWrite(x, y: Integer; s: Str255);
   begin
     x := x + x0 + dx;
     y := y + y0 + dy;
@@ -1395,15 +1396,15 @@ var
     end;
   end;
 
-  function Visible(x, y: longint): boolean;
+  function Visible(x, y: Integer): boolean;
   begin
     Visible := (x <= dx) and (x >= -dx) and (y <= dy) and (y >= -dy);
   end;
 
 var
   nr: integer;
-  l: longint;
-  x, y, xf, yf: longint;
+  l: Integer;
+  x, y, xf, yf: Integer;
   p, d: planetRec;
   s: Str255;
   f: fleetrec;
@@ -1535,7 +1536,7 @@ end;
 procedure mainloop(pid: integer);
 var
   planet: planetRec;
-  radius: longint;
+  radius: Integer;
   menuZeile: integer;
 
   procedure menu(s: Str255);
@@ -1583,7 +1584,7 @@ var
 
   procedure fleetinfo;
   var
-    n, x, y, nd: longint;
+    n, x, y, nd: Integer;
     f: fleetrec;
     s, d: planetrec;
     doit, c: char;
@@ -1654,7 +1655,7 @@ var
   var
     n, c, t: integer;
     p, d: planetrec;
-    range: longint;
+    range: Integer;
     f: fleetrec;
     k: char;
     anz: Real;
@@ -1997,7 +1998,7 @@ begin
 end;
 
 var
-  n: longint;
+  n: Integer;
   z: playerRec;
   p: planetrec;
 
