@@ -172,32 +172,29 @@ type
 
   planetRec = record
     Name: str16;
-    production,
-    ships,
-    owner,
-    x, y: longint;
-    ownerName: str16;
-    last: longint;
-    collectDest,
-    collectSave: integer;
-    taxes: longint;
+    production,               (* Ships per hour, should this be Real?  *)
+    ships,                    (* Ships, either Real or always < 32K    *)
+    owner,                    (* Integer                               *)
+    x, y: longint;            (* Integer                               *)
+    ownerName: str16;         (* Isn't this redundant?                 *)
+    last: longint;            (* Last access timestamp, should be Real *)
   end;
 
   fleetRec = record
     warning: boolean;
-    ships,
-    start,
-    enter,
-    Source,
-    sx, sy,
-    destination,
-    owner: longint;
-    ownerName: str16;
+    ships,                    (* Ships in fleet. Make this Real?       *)
+    start,                    (* Depart timestamp, should be Real      *)
+    enter,                    (* Arrive timestamp, should be Real      *)
+    Source,                   (* Origin planet, Integer                *)
+    sx, sy,                   (* Current position? Anyway, Integer     *)
+    destination,              (* Target planet, Integer                *)
+    owner: longint;           (* Integer                               *)
+    ownerName: str16;         (* Isn't this redundant?                 *)
   end;
 
   PlayerRec = record
     Name: str16;
-    last: longint;
+    last: longint;            (* Last access timestamp, should be Real *)
   end;
 
 var
