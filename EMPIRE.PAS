@@ -639,6 +639,7 @@ begin
   savePlayer(1, player);
 end;
 
+(*
 function conv(c: char): longint;
 begin
   if c >= 'a' then
@@ -650,6 +651,7 @@ begin
   else
     conv := 0;
 end;
+*)
 
 procedure workPlanet(n: longint);
 var
