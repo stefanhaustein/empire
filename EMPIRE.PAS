@@ -1828,6 +1828,7 @@ begin
       gotoxy(3, Lines - 3);
       print('[' + int2str(dt div (60 * 18), -2) + ':' + int2str(dt div
         18 mod 60, -2) + '] Command?  '#8);
+      delay(100);
     until keypressed;
     c := upcase(readkey);
     print(c);
