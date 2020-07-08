@@ -107,12 +107,13 @@ begin
   EpochDay := (Y-1970)*365 + LeapDays + DaysGone[M] + D;
 end;
 
-function HoursPassed(FromDay, FromHour, ToDay, ToHour: Integer): Integer;
+function Now(): LongInt;
+var
+  Year, Month, Day, WeekDay, Hour, Minute, Second, Sec100: Word;
 begin
-  if (ToDay > FromDay) or (ToHour > FromHour) then
-    HoursPassed := (ToDay - FromDay) * 24 + ToHour - FromHour
-  else
-    HoursPassed := 0;
+  GetDate(Year, Month, Day, WeekDay);
+  GetTime(Hour, Minute, Second, Sec100);
+  Now := EpochDay(Year, Month, Day) * 24 + Hour;
 end;
 
 (* --- End of missing functions --- *)
@@ -2007,7 +2008,6 @@ end;
 
 var
   n: longint;
-  y, mo, d, dow, h, m, s, s100: word;
   z: playerRec;
   p: planetrec;
 
@@ -2042,12 +2042,10 @@ begin
 
   timer := gettimer;
 
-  getDate(y, mo, d, dow);
-  getTime(h, m, s, s100);
-
-  (* TODO Start fixing date handling here *)
-  newDate := EpochDay(y, m, d) * 24 + h;
-  (* newHour := ... *)
+  if ParamStr(3) <> '' then
+    Val(ParamStr(3), newDate)
+  else
+    newDate := Now();
 
   Assign(playerFile, 'player.emp');
   Assign(planetFile, 'planet.emp');
