@@ -22,52 +22,34 @@ begin
   Halt(1);
 end;
 
-function long2str(l: longint; n: integer): Str255;
+function Replace(S: Str255; C, D: Char): Str255;
 var
-  s: Str255;
-  c: char;
+  I: Integer;
 begin
-  if (n < 0) then
-  begin
-    c := '0';
-    n := -n;
-  end
-  else
-  begin
-    c := ' ';
-  end;
-
-  str(l, s);
-  while (length(s) < n) do
-  begin
-    s := c + s;
-  end;
-
-  long2str := s;
+  for I := 1 to Length(S) do
+    if S[I] = C then
+      S[I] := D;
+  Replace := S;
 end;
 
-function int2str(i: integer; n: integer): Str255;
+function Real2Str(R: Real; N: Integer): Str255;
 var
-  s: Str255;
-  c: char;
+  S: Str255;
 begin
-  if (n < 0) then
-  begin
-    c := '0';
-    n := -n;
-  end
-  else
-  begin
-    c := ' ';
-  end;
+  Str(R:Abs(N):0, S);
+  if N < 0 then
+    S := Replace(S, ' ', '0');
+  Real2Str := S;
+end;
 
-  str(i, s);
-  while (length(s) < n) do
-  begin
-    s := c + s;
-  end;
-
-  int2str := s;
+function Int2Str(I: Integer; N: Integer): Str255;
+var
+  S: Str255;
+begin
+  Str(I:Abs(N), S);
+  if N < 0 then
+    S := Replace(S, ' ', '0');
+  Int2Str := S;
 end;
 
 function alltrim(s: Str255): Str255;
@@ -172,8 +154,8 @@ type
 
   planetRec = record
     Name: str16;
-    production,               (* Ships per hour, should this be Real?  *)
-    ships,                    (* Ships, either Real or always < 32K    *)
+    production: Integer;      (* Ships per hour, should this be Real?  *)
+    ships: Real;              (* Ships, either Real or always < 32K    *)
     owner,                    (* Integer                               *)
     x, y: longint;            (* Integer                               *)
     ownerName: str16;         (* Isn't this redundant?                 *)
@@ -182,7 +164,7 @@ type
 
   fleetRec = record
     warning: boolean;
-    ships,                    (* Ships in fleet. Make this Real?       *)
+    ships: Real;              (* Ships in fleet. Make this Real?       *)
     start,                    (* Depart timestamp, should be Real      *)
     enter,                    (* Arrive timestamp, should be Real      *)
     Source,                   (* Origin planet, Integer                *)
@@ -243,13 +225,15 @@ begin
   halt(0);
 end;
 
+(*
 function ships2str(n: longint): Str255;
 begin
   if n >= 0 then
-    ships2str := long2str(n, 11)
+    ships2str := Real2str(n, 11)
   else
     ships2str := ' Death star';
 end;
+*)
 
 function ptos(x, y: longint): Str255;
 var
@@ -580,7 +564,7 @@ begin
 
   if d > 1 then
   begin
-    Assign(msg, 'msg' + itos(d) + '.emp');
+    Assign(msg, 'msg' + Int2Str(d, 0) + '.emp');
       {$i-}
     append(msg);
     if ioresult <> 0 then
@@ -695,7 +679,7 @@ procedure fleetWork;
 var
   p: planetrec;
   f, f2: fleetrec;
-  oriP, oriF: longint;
+  oriP, oriF: Real;
   n, fl, Next, i, saveDate: longint;
 
 begin
@@ -773,7 +757,7 @@ begin
         begin
           p.ships := p.ships + f.ships;
           OpenMsg(p.owner, planetToS(f.destination, p));
-          writeMSG('Troops increased by ' + itos(f.ships) + ' to ' + itos(p.ships) +
+          writeMSG('Troops increased by ' + Real2Str(f.ships, 0) + ' to ' + Real2Str(p.ships, 0) +
             ' ships.');
           closeMSG;
         end
@@ -783,9 +767,9 @@ begin
           oriP := p.ships;
           while (p.ships > 0) and (f.ships > 0) do
           begin
-            f.ships := f.ships - p.ships div (5 + random(4)) - 1;
+            f.ships := f.ships - Round(p.ships / (5 + random(4))) - 1;
             if f.ships > 0 then
-              p.ships := p.ships - f.ships div (6 + random(5)) - 1;
+              p.ships := p.ships - Round(f.ships / (6 + random(5))) - 1;
           end;
 
           if f.ships < 0 then
@@ -797,16 +781,16 @@ begin
           begin
             OpenMsg(p.owner, planetToS(f.destination, p));
             writeMSG('FINAL MESSAGE - All troops destroyed by ' +
-              itos(oriF) + ' enemy ships.');
+              Real2Str(oriF, 0) + ' enemy ships.');
             writeMSG('Planet now conrolled by ' + f.ownername + '.');
-            writeMSG('Own losses    ' + itos(oriP) + ' ships.');
-            writeMSG('Enemy losses: ' + itos(oriF - f.ships) + ' ships.');
+            writeMSG('Own losses    ' + Real2Str(oriP, 0) + ' ships.');
+            writeMSG('Enemy losses: ' + Real2Str(oriF - f.ships, 0) + ' ships.');
             closeMsg;
 
             OpenMsg(f.owner, planetToS(f.destination, p));
-            writeMSG('Planet conquered with ' + itos(orif) + ' ships.');
-            writeMSG('Own losses:   ' + itos(oriF - f.ships) + ' ships.');
-            writeMSG('Enemy losses: ' + itos(oriP) + ' ships.');
+            writeMSG('Planet conquered with ' + Real2Str(orif, 0) + ' ships.');
+            writeMSG('Own losses:   ' + Real2Str(oriF - f.ships, 0) + ' ships.');
+            writeMSG('Enemy losses: ' + Real2Str(oriP, 0) + ' ships.');
             closeMsg;
 
             p.ships := f.ships;
@@ -816,16 +800,16 @@ begin
           else
           begin
             OpenMsg(p.owner, planetToS(f.destination, p));
-            writeMSG('Attack by ' + itos(oriF) + ' ships of commander ' + f.ownername);
+            writeMSG('Attack by ' + Real2Str(oriF, 0) + ' ships of commander ' + f.ownername);
             writeMSG('successfully defeated.');
-            writeMSG(itos(p.ships) + ' ships survived the battle.');
-            writeMSG('Own losses: ' + itos(p.ships - oriP) + ' ships.');
+            writeMSG(Real2Str(p.ships, 0) + ' ships survived the battle.');
+            writeMSG('Own losses: ' + Real2Str(p.ships - oriP, 0) + ' ships.');
             closeMsg;
 
             OpenMsg(f.owner, planetToS(f.destination, p));
             writeMSG(
               'FINAL MESSAGE - Attack formation failed to conquer target planet.');
-            writeMSG('All ' + itos(oriF) + ' ships were destroyed.');
+            writeMSG('All ' + Real2Str(oriF, 0) + ' ships were destroyed.');
             closeMsg;
           end;
         end;
@@ -844,10 +828,10 @@ end;
 
 function sendFleet(s: integer; todesstern: boolean): boolean;
 var
-  s2, d, n, delta, costs, time: longint;
+  s2, d, delta, costs, time: longint;
   p1, p2: planetRec;
   f: fleetRec;
-
+  n: Real;
 begin
   sendfleet := False;
 
@@ -913,11 +897,11 @@ begin
       exit;
     end;
     f.ships := -1;
-    Dec(p1.ships, 2000);
+    p1.ships := p1.ships - 2000;
   end
   else
   begin
-    n := input('How many ships [0..' + long2str(p1.ships, 0) + ']? ');
+    n := input('How many ships [0..' + Real2Str(p1.ships, 0) + ']? ');
 
     if n <= 0 then
     begin
@@ -989,7 +973,7 @@ begin
   loadplanet(pn, p);
   if p.owner = 1 then
   begin
-    p.ships := p.ships div 10;
+    p.ships := Round(p.ships / 10);
     saveplanet(pn, p);
   end;
 
@@ -1003,7 +987,7 @@ begin
       player.Name := Name;
       pn := memb * 3 + 3;
       loadplanet(pn, p);
-      Inc(p.ships, p.ships + random(10000) + 1000);
+      p.ships := p.ships + random(10000) + 1000; (* FIXME Really??? *)
       p.production := 5;
       if p.owner <> 0 then
       begin
@@ -1105,7 +1089,7 @@ begin
 
         if eigen then
         begin
-          print(long2str(f.Source, 5) + ' ');
+          print(Int2Str(f.Source, 5) + ' ');
           if d.owner = 0 then
             setcolor(green + h, 15)
           else if d.owner <> id then
@@ -1118,7 +1102,12 @@ begin
         setcolor(cyan + h, h);
         print(' ' + int2str(dt, 6));
         if eigen or (dt <= 8) then
-          print(ships2str(f.ships))
+          begin
+            if f.ships >= 0 then
+              print(Real2str(f.ships, 11))
+            else
+              print(' Death star');
+          end
         else
           print('         ?');
         if not eigen and (dt <= 4) then
@@ -1149,7 +1138,7 @@ var
   k: char;
 
 begin
-  Assign(msg, 'msg' + itos(id) + '.emp');
+  Assign(msg, 'msg' + Int2Str(id, 0) + '.emp');
 {$i-}
   c := 0;
   reset(msg);
@@ -1249,12 +1238,13 @@ end;
 
 procedure statistik(era: boolean);
 var
-  n, nn, paz, pfl, ppr, faz, ffl: longint;
+  n, nn, paz, ppr, faz: longint;
   p: planetrec;
   f: fleetrec;
   s: Str255;
   b: boolean;
   k: char;
+  pfl, ffl: Real;
 begin
   clrscr;
   println('     Statistical information');
@@ -1287,15 +1277,15 @@ begin
     if p.owner = n then
     begin
       Inc(paz, 1);
-      Inc(pfl, p.ships);
-      Inc(ppr, p.production);
+      pfl := pfl + p.ships;
+      ppr := ppr + p.production;
     end;
   end;
 
-  println('         Planets under control: ' + int2str(paz, 0));
-  println('                    Percentage: ' + int2str(paz * 100 div 1000, 0) + ' %');
-  println('          Total resident ships: ' + long2str(pfl, 0));
-  println('        Ships produced per day: ' + long2str(ppr * 24, 0));
+  println('         Planets under control: ' + Int2Str(paz, 0));
+  println('                    Percentage: ' + Real2Str(paz * 100 / 1000, 0) + ' %');
+  println('          Total resident ships: ' + Real2Str(pfl, 0));
+  println('        Ships produced per day: ' + Int2Str(ppr * 24, 0));
   println('');
 
   faz := 0;
@@ -1307,14 +1297,14 @@ begin
     if ((f.owner = n) and (f.ships <> 0)) then
     begin
       Inc(faz, 1);
-      Inc(ffl, abs(f.ships));
+      ffl := ffl + abs(f.ships);
     end;
   end;
 
-  println('              Number of fleets: ' + long2str(faz, 0));
-  println('               Ships in travel: ' + long2str(ffl, 0));
+  println('              Number of fleets: ' + Int2Str(faz, 0));
+  println('               Ships in travel: ' + Real2Str(ffl, 0));
   println('');
-  println('                   Total ships: ' + long2str(pfl + ffl, 0));
+  println('                   Total ships: ' + Real2Str(pfl + ffl, 0));
   println('');
 
   if era and (pfl + ffl = 0) then
@@ -1378,8 +1368,8 @@ begin
       end;
       Inc(c, 1);
       setcolor(cyan + 8 * (c and 1), 7 + 8 * (c and 1));
-      println(planetToS(n, p) + '          ' + long2str(p.ships, 11) +
-        long2str(p.Production * 24, 11));
+      println(planetToS(n, p) + '          ' + Real2Str(p.ships, 11) +
+        Int2str(p.Production * 24, 11));
     end;
   end;
 end;
@@ -1485,7 +1475,7 @@ begin
               MapWrite(x, y, '+' + int2str(nr, 0))
             else
               MapWrite(x, y, chr(96 + f.owner) + iif(f.ships <
-                0, '!', int2str((f.ships + 50) div 100, 0) + '^'));
+                0, '!', Real2str((f.ships + 50) / 100, 0) + '^'));
           end;
         end;
       end;
@@ -1530,7 +1520,7 @@ begin
         s := s + int2str(nr, 0);
 
         if r < 8 then
-          MapWrite(x + 1, y + 1, (long2str((p.ships + 50) div 100, 0) + '^'));
+          MapWrite(x + 1, y + 1, (Real2Str((p.ships + 50) / 100, 0) + '^'));
       end;
 
       MapWrite(x, y, s);
@@ -1579,7 +1569,7 @@ var
       setcolor(cyan, 7);
       menu('Position    Ships   Prod.');
       setcolor(8 + cyan, 15);
-      menu(ptos(x, y) + long2str(ships, 11) + int2str(production * 24, 6));
+      menu(ptos(x, y) + Real2Str(ships, 11) + Int2Str(production * 24, 6));
       setcolor(cyan, 7);
     end;
   end;
@@ -1625,10 +1615,10 @@ var
       if f.ships < 0 then
         print('Death star')
       else
-        print('Cnt: ' + long2str(f.ships, 0));
+        print('Cnt: ' + Real2Str(f.ships, 0));
 
       print(' Pos: ' + ptos(x, y) + ' Dest: ' + trimplanet(f.destination, d) + ' in ' +
-        long2str(f.enter - date, 0) + ' h');
+        Real2Str(f.enter - date, 0) + ' h');
       gotoxy(3, Lines - 1);
       print('Change course (Y/N)? ');
 
@@ -1662,10 +1652,10 @@ var
   var
     n, c, t: integer;
     p, d: planetrec;
-    range, anz: longint;
+    range: longint;
     f: fleetrec;
     k: char;
-
+    anz: Real;
   begin
     collectFleet := False;
 
@@ -1719,8 +1709,8 @@ var
             '---------------------------------------------------------------------');
         end;
         Inc(c, 1);
-        print(planetToS(n, p) + '  ' + long2str(p.ships, 11) + long2str(
-          p.Production * 24, 7) + long2str(t, 6) + '  ');
+        print(planetToS(n, p) + '  ' + Real2Str(p.ships, 11) + Int2Str(
+          p.Production * 24, 7) + Real2Str(t, 6) + '  ');
         anz := input('? ');
         if anz < 0 then
           exit;
@@ -1730,7 +1720,7 @@ var
 
         gotoxy(58, cy);
 
-        println(long2str(anz, 12));
+        println(Real2Str(anz, 12));
         if anz > 0 then
         begin
           f.ownername := player.Name;
@@ -2008,7 +1998,7 @@ var
   z: playerRec;
   p: planetrec;
 
-  ships: longint;
+  ships: Real;
   pid, i: integer;
 
 begin
