@@ -425,10 +425,10 @@ function dtos(R: Real): Str255;
 var
   D, H: Integer;
 begin
-  D := Round(R / 24);
-  H := Round(R - 24 * D);
+  D := Trunc(R / 24);
+  H := Trunc(R - 24 * D);
 
-  dtos := Int2Str(D, 0) + '.' + Int2Str(H, 0);
+  dtos := 'Stardate ' + Int2Str(D, 0) + '.' + Int2Str(H, 0);
 
 (*
   d := d + 16;
