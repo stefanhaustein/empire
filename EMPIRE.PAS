@@ -89,13 +89,13 @@ begin
   EpochDay := (Y-1970)*365 + LeapDays + DaysGone[M] + D;
 end;
 
-function Now(): LongInt;
+function Now(): Real;
 var
   Year, Month, Day, WeekDay, Hour, Minute, Second, Sec100: Word;
 begin
   GetDate(Year, Month, Day, WeekDay);
   GetTime(Hour, Minute, Second, Sec100);
-  Now := EpochDay(Year, Month, Day) * 24 + Hour;
+  Now := EpochDay(Year, Month, Day) * 24.0 + Hour;
 end;
 
 (* --- End of missing functions --- *)
@@ -159,14 +159,14 @@ type
     owner,                    (* Integer                               *)
     x, y: Integer;            (* Integer                               *)
     ownerName: str16;         (* Isn't this redundant?                 *)
-    last: longint;            (* Last access timestamp, should be Real *)
+    last: Real;               (* Last access timestamp, should be Real *)
   end;
 
   fleetRec = record
     warning: boolean;
     ships: Real;              (* Ships in fleet. Make this Real?       *)
     start,                    (* Depart timestamp, should be Real      *)
-    enter: LongInt;           (* Arrive timestamp, should be Real      *)
+    enter: Real;              (* Arrive timestamp, should be Real      *)
     Source,                   (* Origin planet, Integer                *)
     sx, sy,                   (* Current position? Anyway, Integer     *)
     destination,              (* Target planet, Integer                *)
@@ -176,7 +176,7 @@ type
 
   PlayerRec = record
     Name: str16;
-    last: longint;            (* Last access timestamp, should be Real *)
+    last: Real;               (* Last access timestamp, should be Real *)
   end;
 
 var
@@ -184,9 +184,10 @@ var
   planetFile: file of planetRec;
   fleetFile: file of fleetRec;
   player: playerRec;
-  id, date, newdate: longint;
+  id: Integer;
+  date, newdate: Real;
   mark: Str255;
-  timer, dt, lastdisp: longint;
+  timer, dt: Longint;
   msg: Text;
 
 
@@ -202,7 +203,7 @@ begin
   Write(planetfile, r);
 end;
 
-function traveltime(x0, y0, x1, y1: Integer): longint;
+function traveltime(x0, y0, x1, y1: Integer): Real;
 begin
   traveltime := round(sqrt(sqr(x0 - x1) + sqr(y0 - y1))) div 12 + 1;
 end;
@@ -410,6 +411,7 @@ begin
   upStr := d;
 end;
 
+(*
 function itos(i: longint): Str255;
 var
   s: Str255;
@@ -417,17 +419,28 @@ begin
   str(i, s);
   itos := s;
 end;
+*)
 
-function dtos(d: longint): Str255;
+function dtos(R: Real): Str255;
+var
+  D, H: Integer;
 begin
+  D := Round(R / 24);
+  H := Round(R - 24 * D);
+
+  dtos := Int2Str(D, 0) + '.' + Int2Str(H, 0);
+
+(*
   d := d + 16;
+
   dtos := itos(d div 24 mod 32) + '.' + itos(d div (24 * 32) mod 12) + '. ' +
     itos(d mod 24) + ':00';
+*)
 end;
 
-function input(s: Str255): longint;
+function input(s: Str255): Integer;
 var
-  i: longint;
+  i: Integer;
   err: integer;
 begin
   print(s);
@@ -556,7 +569,7 @@ begin
 end;
 
 var
-  dest: longint;
+  dest: Integer;
 
 procedure openMsg(d: Integer; s: Str255);
 begin
@@ -655,11 +668,11 @@ end;
 
 procedure workPlanet(n: Integer);
 var
-  dt: longint;
+  dt: Real;
   p: planetrec;
 begin
   loadPlanet(n, p);
-  dt := date - p.last;
+  dt := Int(date - p.last);
   if dt <> 0 then
   begin
     if p.owner > 0 then
@@ -682,7 +695,7 @@ var
   p: planetrec;
   f, f2: fleetrec;
   oriP, oriF: Real;
-  Next, saveDate: longint;
+  Next, saveDate: Real;
   n, i, fl: Integer;
 begin
   fl := fleets;
@@ -830,7 +843,7 @@ end;
 
 function sendFleet(s: Integer; todesstern: boolean): boolean;
 var
-  delta, costs, time: longint;
+  (* delta, costs, *) time: Real;
   p1, p2: planetRec;
   f: fleetRec;
   n: Real;
@@ -888,7 +901,7 @@ begin
 
   time := traveltime(p1.x, p1.y, p2.x, p2.y);
 
-  println('The flight to ' + p2.Name + ' will take about ' + int2str(time, 0) + ' hours.');
+  println('The flight to ' + p2.Name + ' will take about ' + Real2str(time, 0) + ' hours.');
   gotoxy(3, Lines - 1);
 
   if todesstern then
@@ -938,7 +951,7 @@ function login: boolean;
 var
   Name, password, number: Str255;
   error: integer;
-  pn: longint;
+  pn: Integer;
   p: planetrec;
   c: char;
 begin
@@ -971,6 +984,7 @@ begin
 
   login := False;
 
+  (* FIXME What is this supposed to do??? *)
   pn := (memb and 127) * 7 + 1;
 
   loadplanet(pn, p);
@@ -979,6 +993,7 @@ begin
     p.ships := Round(p.ships / 10);
     saveplanet(pn, p);
   end;
+  (* ------------------------------------ *)
 
   if (Name <> '') then
   begin
@@ -1017,7 +1032,7 @@ begin
       if newdate - player.last < 6 then
       begin
         print('Access to galactic supercomputer rejected.' + #13#10);
-        print('Please try again ' + int2str(6 - newdate + player.last, 2) + ' hours' + #13#10);
+        print('Please try again ' + Real2str(6 - newdate + player.last, 2) + ' hours' + #13#10);
         login := False;
         id := 0;
       end
@@ -1040,7 +1055,7 @@ var
   f: fleetrec;
   s, d: planetrec;
   x, y, n, h, c: integer;
-  dt: longint;
+  dt: Real;
 begin
   c := 0;
   for n := 1 to fleets do
@@ -1082,8 +1097,8 @@ begin
         end;
         Inc(c, 1);
 
-        x := f.sx - (f.sx - d.x) * (f.start - date) div (f.start - f.enter);
-        y := f.sy - (f.sy - d.y) * (f.start - date) div (f.start - f.enter);
+        x := Round(f.sx - (f.sx - d.x) * (f.start - date) / (f.start - f.enter));
+        y := Round(f.sy - (f.sy - d.y) * (f.start - date) / (f.start - f.enter));
 
         h := (c and 1) * 8;
 
@@ -1103,7 +1118,7 @@ begin
 
 
         setcolor(cyan + h, h);
-        print(' ' + int2str(dt, 6));
+        print(' ' + Real2str(dt, 6));
         if eigen or (dt <= 8) then
           begin
             if f.ships >= 0 then
@@ -1428,10 +1443,10 @@ begin
 
   setcolor(7, 7);
   for nr := 0 to 10 do
-    mapwrite((100 * nr + 50 - cx) * xf div r, -dy, chr(nr + 65));
+    mapwrite(Round((100 * nr + 50 - cx) * xf / r), -dy, chr(nr + 65));
 
   for nr := 0 to 10 do
-    mapwrite(-dx, (100 * nr + 50 - cy) * yf div r, chr(nr + 48));
+    mapwrite(-dx, Round((100 * nr + 50 - cy) * yf / r), chr(nr + 48));
 
   if r <= 4 then
   begin
@@ -1444,10 +1459,10 @@ begin
       loadfleet(nr, f);
       loadplanet(f.destination, d);
 
-      x := f.sx - (f.sx - d.x) * (f.start - date) div (f.start - f.enter);
-      y := f.sy - (f.sy - d.y) * (f.start - date) div (f.start - f.enter);
-      x := (x - cx) * xf div r;
-      y := (y - cy) * yf div r;
+      x := Round(f.sx - (f.sx - d.x) * (f.start - date) / (f.start - f.enter));
+      y := Round(f.sy - (f.sy - d.y) * (f.start - date) / (f.start - f.enter));
+      x := Round((x - cx) * xf / r);
+      y := Round((y - cy) * yf / r);
 
       if (f.ships <> 0) and (Visible(x, y)) then
       begin
@@ -1463,12 +1478,12 @@ begin
         else
           setcolor(red, 7);
 
-        for l := f.enter * 2 downto date * 2 do
+        for l := Round(f.enter * 2) downto Round(date * 2) do
         begin
-          x := f.sx - (f.sx - d.x) * (f.start * 2 - l) div ((f.start - f.enter) * 2);
-          y := f.sy - (f.sy - d.y) * (f.start * 2 - l) div ((f.start - f.enter) * 2);
-          x := (x - cx) * xf div r;
-          y := (y - cy) * yf div r;
+          x := Round(f.sx - (f.sx - d.x) * (f.start * 2 - l) / ((f.start - f.enter) * 2));
+          y := Round(f.sy - (f.sy - d.y) * (f.start * 2 - l) / ((f.start - f.enter) * 2));
+          x := Round((x - cx) * xf / r);
+          y := Round((y - cy) * yf / r);
 
           if l <> date * 2 then
             mapWrite(x, y, '.')
@@ -1606,8 +1621,8 @@ var
     loadplanet(f.Source, s);
     loadplanet(f.destination, d);
 
-    x := f.sx - (f.sx - d.x) * (f.start - date) div (f.start - f.enter);
-    y := f.sy - (f.sy - d.y) * (f.start - date) div (f.start - f.enter);
+    x := Round(f.sx - (f.sx - d.x) * (f.start - date) / (f.start - f.enter));
+    y := Round(f.sy - (f.sy - d.y) * (f.start - date) / (f.start - f.enter));
 
     repeat
       drawMap(2, 2, 50, (Lines - 24 + 19), x, y, 2);
@@ -1653,7 +1668,8 @@ var
 
   function collectFleet(pid: integer): boolean;
   var
-    n, c, t: integer;
+    n, c: integer;
+    t: Real;
     p, d: planetrec;
     range: Integer;
     f: fleetrec;
