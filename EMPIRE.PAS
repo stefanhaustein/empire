@@ -154,29 +154,29 @@ type
 
   planetRec = record
     Name: str16;
-    production: Integer;      (* Ships per hour, should this be Real?  *)
-    ships: Real;              (* Ships, either Real or always < 32K    *)
-    owner,                    (* Integer                               *)
-    x, y: Integer;            (* Integer                               *)
-    ownerName: str16;         (* Isn't this redundant?                 *)
-    last: Real;               (* Last access timestamp, should be Real *)
+    production: Integer;      (* Ships per hour             *)
+    ships: Real;              (* Ships                      *)
+    owner,                    (* Player number              *)
+    x, y: Integer;            (* Coordinates                *)
+    ownerName: str16;         (* Redundant to avoid lookup  *)
+    last: Real;               (* Last access timestamp      *)
   end;
 
   fleetRec = record
     warning: boolean;
-    ships: Real;              (* Ships in fleet. Make this Real?       *)
-    start,                    (* Depart timestamp, should be Real      *)
-    enter: Real;              (* Arrive timestamp, should be Real      *)
-    Source,                   (* Origin planet, Integer                *)
-    sx, sy,                   (* Current position? Anyway, Integer     *)
-    destination,              (* Target planet, Integer                *)
-    owner: Integer;           (* Integer                               *)
-    ownerName: str16;         (* Isn't this redundant?                 *)
+    ships: Real;              (* Ships in fleet.            *)
+    start,                    (* Depart timestamp           *)
+    enter: Real;              (* Arrive timestamp           *)
+    Source,                   (* Origin planet id           *)
+    sx, sy,                   (* Current position           *)
+    destination,              (* Target planet id           *)
+    owner: Integer;           (* Owner id                   *)
+    ownerName: str16;         (* Redundant to avoid lookup  *)
   end;
 
   PlayerRec = record
     Name: str16;
-    last: Real;               (* Last access timestamp, should be Real *)
+    last: Real;               (* Last access timestamp      *)
   end;
 
 var
@@ -984,7 +984,9 @@ begin
 
   login := False;
 
-  (* FIXME What is this supposed to do??? *)
+  (* If this planet is owned by the computer, reduce troops to 10%.  *)
+  (* Might be leftover from "revolutions" -- or a non working        *)
+  (* attempt to avoid the computer homeworld becoming unconquerable? *)
   pn := (memb and 127) * 7 + 1;
 
   loadplanet(pn, p);
@@ -1005,7 +1007,7 @@ begin
       player.Name := Name;
       pn := memb * 3 + 3;
       loadplanet(pn, p);
-      p.ships := p.ships + random(10000) + 1000; (* FIXME Really??? *)
+      p.ships := p.ships + random(10000) + 1000; (* some "startup capital" for the new player *)
       p.production := 5;
       if p.owner <> 0 then
       begin
