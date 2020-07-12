@@ -11,15 +11,14 @@ var
   Local: boolean;
   mono: boolean;
   Color: byte;
-  cmd1, cmd2: Str255;
   cx, cy, Lines: integer;
 
 (* --- Start of missing functions --- *)
 
-procedure fatal(s: Str255);
+procedure Fatal(s: Str255);
 begin
   WriteLn(s);
-  Halt(1);
+  Halt();
 end;
 
 function Replace(S: Str255; C, D: Char): Str255;
@@ -30,6 +29,15 @@ begin
     if S[I] = C then
       S[I] := D;
   Replace := S;
+end;
+
+function ToUpper(S: Str255): Str255;
+var
+  I: Integer;
+begin
+  for I := 1 to Length(S) do
+    S[I] := UpCase(S[I]);
+  ToUpper := S;  
 end;
 
 function Real2Str(R: Real; N: Integer): Str255;
@@ -52,27 +60,37 @@ begin
   Int2Str := S;
 end;
 
-function alltrim(s: Str255): Str255;
+function TrimStr(S: Str255): Str255;
+var
+  I, J: Integer;
 begin
-  while ((length(s) > 0) and (s[1] <= ' ')) do
-  begin
-    s := copy(s, 2, 255);
-  end;
-
-  while ((length(s) > 0) and (s[length(s)] <= ' ')) do
-  begin
-    s := copy(s, 1, length(s) - 1);
-  end;
-
-  alltrim := s;
+  I := 1;
+  while ((I <= Length(S)) and (S[I] <= ' ')) do
+    I := I + 1;
+  J := Length(S);
+  while ((J > I) and (S[I] <= ' ')) do
+    J := J - 1;
+  TrimStr := Copy(S, I, J - I);
 end;
 
-function iif(b: boolean; s: Str255; t: Str255): Str255;
+function AlignStr(S: Str255; N: Integer): Str255;
+const
+  Spaces = '                ';
 begin
-  if b then
-    iif := s
-  else
-    iif := t;
+  if Length(S) >= Abs(N) then
+    AlignStr := S
+  else if N > 0 then
+  begin
+    while Length(S) < N do
+      S := S + Spaces;
+    AlignStr := Copy(S, 1, N);  
+  end
+  else begin
+    N := -N;
+    while Length(S) < N do
+      S := Spaces + S;
+    AlignStr := Copy(S, Length(S) - N + 1, N);
+  end
 end;
 
 function EpochDay(Y, M, D: Integer): Integer;
@@ -226,16 +244,6 @@ begin
   halt(0);
 end;
 
-(*
-function ships2str(n: longint): Str255;
-begin
-  if n >= 0 then
-    ships2str := Real2str(n, 11)
-  else
-    ships2str := ' Death star';
-end;
-*)
-
 function ptos(x, y: Integer): Str255;
 var
   sx, sy: Str255;
@@ -246,25 +254,12 @@ begin
   ptos := chr(x div 100 + 65) + chr(y div 100 + 48) + ' ' + sx + '/' + sy;
 end;
 
-function cutname(s: str16): str16;
-begin
-  cutname := copy(s + '                ', 1, 16);
-end;
-
 function planetToS(n: Integer; p: planetRec): Str255;
 var
   s: Str255;
 begin
   str(n: 3, s);
-  planetToS := '#' + s + ' ' + cutname(p.Name) + ' ' + ptos(p.x, p.y);
-end;
-
-function trimPlanet(n: Integer; p: planetRec): Str255;
-var
-  s: Str255;
-begin
-  str(n: 3, s);
-  TrimPlanet := '#' + alltrim(s) + ' ' + alltrim(cutname(p.Name)) + ' ' + ptos(p.x, p.y);
+  planetToS := '#' + s + ' ' + AlignStr(p.Name, 16) + ' ' + ptos(p.x, p.y);
 end;
 
 function gettimer: longint;
@@ -365,7 +360,7 @@ begin
 end;
 
 function waitkey: char;
-var
+var 
   c: char;
 begin
   while keypressed do
@@ -399,27 +394,6 @@ begin
 
   instr := c = #13;
 end;
-
-function upStr(s: Str255): Str255;
-var
-  d: Str255;
-  i: byte;
-begin
-  d := '';
-  for i := 1 to length(s) do
-    d := d + upcase(s[i]);
-  upStr := d;
-end;
-
-(*
-function itos(i: longint): Str255;
-var
-  s: Str255;
-begin
-  str(i, s);
-  itos := s;
-end;
-*)
 
 function dtos(R: Real): Str255;
 var
@@ -520,7 +494,7 @@ var
   p: playerRec;
   n: Integer;
 begin
-  s := upstr(s);
+  s := ToUpper(s);
   for n := 1 to players do
   begin
     ;
@@ -651,20 +625,6 @@ begin
   player.last := Newdate;
   savePlayer(1, player);
 end;
-
-(*
-function conv(c: char): longint;
-begin
-  if c >= 'a' then
-    conv := (Ord(c) - Ord('a')) * 100
-  else if c >= 'A' then
-    conv := (Ord(c) - Ord('A')) * 100
-  else if c >= '0' then
-    conv := (Ord(c) - Ord('0')) * 100
-  else
-    conv := 0;
-end;
-*)
 
 procedure workPlanet(n: Integer);
 var
@@ -980,7 +940,7 @@ begin
   println('');
   println('Login Date: ' + dtos(newdate));
   println('');
-  Name := upstr(ParamStr(1));
+  Name := ToUpper(ParamStr(1));
 
   login := False;
 
@@ -1251,7 +1211,7 @@ begin
   if s <> '' then
   begin
     p.Name := s;
-    p.Name := upstr(p.Name);
+    p.Name := ToUpper(p.Name);
     saveplanet(n, p);
   end;
 end;
@@ -1358,7 +1318,7 @@ begin
         println('');
       end;
       Inc(c, 1);
-      println(chr(64 + c) + ': ' + cutname(p.Name) + '           ' + copy(dtos(p.last), 1, 5));
+      println(chr(64 + c) + ': ' + AlignStr(p.Name, 16) + '           ' + copy(dtos(p.last), 1, 5));
     end;
   end;
 end;
@@ -1494,8 +1454,10 @@ begin
             if f.owner = id then
               MapWrite(x, y, '+' + int2str(nr, 0))
             else
-              MapWrite(x, y, chr(96 + f.owner) + iif(f.ships <
-                0, '!', Real2str((f.ships + 50) / 100, 0) + '^'));
+              if f.ships < 0 then
+                MapWrite(x, y, chr(96 + f.owner) + '!')
+              else
+                MapWrite(x, y, chr(96 + f.owner) + Real2str((f.ships + 50) / 100, 0) + '^');
           end;
         end;
       end;
@@ -1599,6 +1561,7 @@ var
     drawMap(2, 2, 50, (Lines - 24 + 19), planet.x, planet.y, radius);
   end;
 
+(*
   procedure fleetinfo;
   var
     n, x, y, nd: Integer;
@@ -1637,8 +1600,9 @@ var
       else
         print('Cnt: ' + Real2Str(f.ships, 0));
 
-      print(' Pos: ' + ptos(x, y) + ' Dest: ' + trimplanet(f.destination, d) + ' in ' +
-        Real2Str(f.enter - date, 0) + ' h');
+      print(' Pos: ' + ptos(x, y) + ' Dest: #' + Int2Str(f.destination, 0));
+      print(' ' + TrimStr(d.Name) + ' ' + ptos(d.x, d.y));
+      print(' in ' + Real2Str(f.enter - date, 0) + ' h');
       gotoxy(3, Lines - 1);
       print('Change course (Y/N)? ');
 
@@ -1667,6 +1631,7 @@ var
 
     restoreMap;
   end;
+*)
 
   function collectFleet(pid: integer): boolean;
   var
