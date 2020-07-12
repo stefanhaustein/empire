@@ -270,11 +270,6 @@ begin
   gettimer := (h * 3600 + m * 60 + s) * 18 + s100 div 5;
 end;
 
-function memb: byte;
-begin
-  memb := byte(gettimer);
-end;
-
 procedure testleave;
 begin
   dt := 36 * 60 * 18 - (gettimer - timer);
@@ -947,7 +942,7 @@ begin
   (* If this planet is owned by the computer, reduce troops to 10%.  *)
   (* Might be leftover from "revolutions" -- or a non working        *)
   (* attempt to avoid the computer homeworld becoming unconquerable? *)
-  pn := (memb and 127) * 7 + 1;
+  pn := 1 + Random(1000);
 
   loadplanet(pn, p);
   if p.owner = 1 then
@@ -965,7 +960,7 @@ begin
       id := freePlayer;
       player.last := NewDate;
       player.Name := Name;
-      pn := memb * 3 + 3;
+      pn := 1 + Random(1000);
       loadplanet(pn, p);
       p.ships := p.ships + random(10000) + 1000; (* some "startup capital" for the new player *)
       p.production := 5;
