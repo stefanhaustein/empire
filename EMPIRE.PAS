@@ -962,7 +962,7 @@ begin
       player.Name := Name;
       pn := 1 + Random(1000);
       loadplanet(pn, p);
-      p.ships := p.ships + random(10000) + 1000; (* some "startup capital" for the new player *)
+      p.ships := p.ships + random(2000) + 4000; (* some "startup capital" for the new player *)
       p.production := 5;
       if p.owner <> 0 then
       begin
