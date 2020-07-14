@@ -116,6 +116,14 @@ begin
   Now := EpochDay(Year, Month, Day) * 24.0 + Hour;
 end;
 
+function Ticks(): Integer;
+var
+  Hour, Minute, Second, Sec100: Word;
+begin
+  GetTime(Hour, Minute, Second, Sec100);
+  Ticks := Minute * 60 + Second;
+end;
+
 (* --- End of missing functions --- *)
 
 procedure print(s: Str255);
@@ -205,7 +213,7 @@ var
   id: Integer;
   date, newdate: Real;
   mark: Str255;
-  timer, dt: Longint;
+  timer, dt: Integer;
   msg: Text;
 
 
@@ -262,18 +270,14 @@ begin
   planetToS := '#' + s + ' ' + AlignStr(p.Name, 16) + ' ' + ptos(p.x, p.y);
 end;
 
-function gettimer: longint;
-var
-  h, m, s, s100: word;
-begin
-  GetTime(h, m, s, s100);
-  gettimer := (h * 3600 + m * 60 + s) * 18 + s100 div 5;
-end;
-
 procedure testleave;
+var
+  tmp: Integer;
 begin
-  dt := 36 * 60 * 18 - (gettimer - timer);
-  dt := dt + 20 * 60 * 18;
+  tmp := Ticks - timer;
+  if (tmp < 0) then
+    tmp := 3600 + tmp;
+  dt := 3600 - tmp;
   if dt < 0 then
     leave;
 end;
@@ -1008,7 +1012,6 @@ end;
 
 procedure fleetList(eigen: boolean);
 var
-  (* nd: longint; *)
   f: fleetrec;
   s, d: planetrec;
   x, y, n, h, c: integer;
@@ -1108,7 +1111,6 @@ var
 procedure displaymessages;
 var
   m: Str255;
-  (* n: longint; *)
   c: Integer;
   k: char;
 
@@ -1805,8 +1807,7 @@ begin
 
     repeat
       gotoxy(3, Lines - 3);
-      print('[' + int2str(dt div (60 * 18), -2) + ':' + int2str(dt div
-        18 mod 60, -2) + '] Command?  '#8);
+      print('[' + int2str(dt div 60, -2) + ':' + int2str(dt mod 60, -2) + '] Command?  '#8);
       delay(100);
     until keypressed;
     c := upcase(readkey);
@@ -2009,7 +2010,7 @@ begin
   id := 0;
   dt := 100000;
 
-  timer := gettimer;
+  timer := Ticks;
 
   if ParamStr(3) <> '' then
     Val(ParamStr(3), newDate)
