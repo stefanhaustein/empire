@@ -341,32 +341,23 @@ begin
   gotoxy(1, 1);
 end;
 
-function keypressed: boolean;
-begin
-  testleave;
-  keypressed := crt.keypressed;
-end;
-
-function readkey: char;
+function InKey: Char;
 begin
   repeat
-    testleave;
-  until keypressed;
+    TestLeave;
+  until KeyPressed;
 
-  if crt.keypressed then
-    readkey := crt.readkey;
-
+  InKey := ReadKey;
 end;
 
-function waitkey: char;
-var 
-  c: char;
+function WaitKey: char;
 begin
-  while keypressed do
-    c := readkey;
-  println('');
-  print(' - Key - ');
-  waitkey := readkey;
+  while KeyPressed do
+    WaitKey := InKey;
+
+  PrintLn('');
+  Print(' - Key - ');
+  WaitKey := InKey;
 end;
 
 function instr(var s: Str255; ml: integer): boolean;
@@ -375,7 +366,7 @@ var
 begin
   s := '';
   repeat
-    c := readkey;
+    c := InKey;
     if (c >= ' ') and (c < #255) and (length(s) < abs(ml)) and
       ((c in ['0'..'9']) or (ml > 0)) then
     begin
@@ -444,9 +435,9 @@ begin
   print(s + #7);
 
   while keypressed do
-    c := readkey;
+    c := InKey;
 
-  c := readkey;
+  c := InKey;
 end;
 
 procedure loadPlanet(n: Integer; var r: planetrec);
@@ -866,7 +857,7 @@ begin
   if todesstern then
   begin
     print('Confirm launch of the death star with "Y", abort otherwise? ');
-    if upcase(readkey) <> 'Y' then
+    if upcase(InKey) <> 'Y' then
     begin
       error('Launch aborted!                                            ');
       exit;
@@ -1140,7 +1131,7 @@ begin
     rewrite(msg);
   end;
   if c mod (Lines - 7) <> 0 then
-    k := readkey;
+    k := InKey;
 end;
 
 procedure SendText;
@@ -1603,7 +1594,7 @@ var
       gotoxy(3, Lines - 1);
       print('Change course (Y/N)? ');
 
-      doit := upCase(readkey);
+      doit := upCase(InKey);
       print(doit);
 
       if doit = 'Y' then
@@ -1806,11 +1797,12 @@ begin
     clearArea(3, Lines - 3, 78, Lines - 1);
 
     repeat
+      TestLeave;
       gotoxy(3, Lines - 3);
       print('[' + int2str(dt div 60, -2) + ':' + int2str(dt mod 60, -2) + '] Command?  '#8);
       delay(100);
     until keypressed;
-    c := upcase(readkey);
+    c := upcase(InKey);
     print(c);
     if not local then
       Write(' Command: ', c);
@@ -1855,7 +1847,7 @@ begin
       begin
         drawMap(1, 1, 79, Lines, planet.x, planet.y, radius);
         repeat
-          case upcase(readkey) of
+          case upcase(InKey) of
             '-':
               if radius < 7 then
                 Inc(radius, 1)
@@ -1925,7 +1917,7 @@ begin
         setcolor(cyan, 7);
         print(': Enemy fleets ? ');
 
-        c := upcase(readkey);
+        c := upcase(InKey);
         if c <> #27 then
         begin
           print(c);
