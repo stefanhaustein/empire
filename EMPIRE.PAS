@@ -282,12 +282,11 @@ begin
     leave;
 end;
 
-procedure gotoxy(x, y: integer);
-
+procedure SetCursor(x, y: integer);
 begin
   if local then
   begin
-    crt.gotoXY(x, y);
+    gotoXY(x, y);
   end
   else
   begin
@@ -298,7 +297,7 @@ begin
   cy := y;
 end;
 
-procedure clearArea(x1, y1, x2, y2: integer);
+procedure ClearRegion(x1, y1, x2, y2: integer);
 var
   y: integer;
 begin
@@ -308,14 +307,14 @@ begin
   begin
     if local then
     begin
-      crt.gotoxy(x1, y);
+      gotoxy(x1, y);
       Write(copy(
         '                                                                                  ',
         1, x2));
     end
     else
     begin
-      gotoxy(x1, y);
+      SetCursor(x1, y);
       Write(copy(
         '                                                                                  ',
         1, x2));
@@ -325,20 +324,20 @@ begin
   end;
 end;
 
-procedure clrscr;
+procedure ClearScreen;
 var
   c: integer;
 begin
   cx := 999;
   cy := 999;
   if local then
-    crt.clrscr;
+    clrscr;
   c := color;
   color := magenta;
   Write(#27'[2J');
   setcolor(c, c);
   testleave;
-  gotoxy(1, 1);
+  SetCursor(1, 1);
 end;
 
 function InKey: Char;
@@ -429,7 +428,7 @@ procedure error(s: Str255);
 var
   c: char;
 begin
-  gotoxy(3, Lines - 1);
+  SetCursor(3, Lines - 1);
   setcolor(red + 8 + 128, 15 + 128);
 
   print(s + #7);
@@ -839,7 +838,7 @@ begin
 
   d := input(' to planet #');
 
-  gotoxy(3, Lines - 2);
+  SetCursor(3, Lines - 2);
 
   if (d < 1) or (d > planets) then
   begin
@@ -852,7 +851,7 @@ begin
   time := traveltime(p1.x, p1.y, p2.x, p2.y);
 
   println('The flight to ' + p2.Name + ' will take about ' + Real2str(time, 0) + ' hours.');
-  gotoxy(3, Lines - 1);
+  SetCursor(3, Lines - 1);
 
   if todesstern then
   begin
@@ -905,11 +904,11 @@ var
   p: planetrec;
   c: char;
 begin
-  clrscr;
+  ClearScreen;
 
   if not local then
   begin
-    crt.clrscr;
+    clrscr;
     println('Empire is being played by ' + ParamStr(1) + ' at ' + ParamStr(2) + ' baud');
     println('');
     println('Press ESC to abort...');
@@ -1024,7 +1023,7 @@ begin
           if c <> 0 then
             if waitkey = #27 then
               exit;
-          clrscr;
+          ClearScreen;
           if eigen then
           begin
             println('     List of my fleets');
@@ -1087,7 +1086,7 @@ begin
   end;
   if c = 0 then
   begin
-    clrscr;
+    ClearScreen;
     println('');
     println('');
     println('No fleets in travel');
@@ -1120,7 +1119,7 @@ begin
       begin
         if (c <> 0) then
           k := waitkey;
-        clrscr;
+        ClearScreen;
         println('     Messages / news');
         println('     ==========================');
         println('');
@@ -1140,7 +1139,7 @@ var
   n: Integer;
   b: boolean;
 begin
-  clrscr;
+  ClearScreen;
   print('Send message to: ');
   b := instr(s, 20);
   println('');
@@ -1178,7 +1177,7 @@ begin
     n := n0;
   end;
 
-  gotoxy(3, Lines - 2);
+  SetCursor(3, Lines - 2);
 
   if (n <= 0) or (n > planets) then
   begin
@@ -1214,7 +1213,7 @@ var
   k: char;
   pfl, ffl, ppr: Real;
 begin
-  clrscr;
+  ClearScreen;
   println('     Statistical information');
   println('     ==========================');
   println('');
@@ -1300,7 +1299,7 @@ begin
         if c <> 0 then
           if waitkey = #27 then
             exit;
-        clrscr;
+        ClearScreen;
         println('     Commanders');
         println('     ==========');
         println('');
@@ -1327,7 +1326,7 @@ begin
         if c <> 0 then
           if waitkey = #27 then
             exit;
-        clrscr;
+        ClearScreen;
         println('     Planets under control');
         println('     ======================');
         println('');
@@ -1356,7 +1355,7 @@ var
 
     if (y >= y0) and (y <= y1) and (x >= x0) and (x + length(s) <= x1) then
     begin
-      gotoxy(x, y);
+      SetCursor(x, y);
       print(s);
     end;
   end;
@@ -1385,7 +1384,7 @@ begin
 
   r := radius[r];
 
-  clearArea(x0, y0, x1, y1);
+  ClearRegion(x0, y0, x1, y1);
 
   dx := ((x1 - x0)) div 2;
   dy := ((y1 - y0)) div 2;
@@ -1511,9 +1510,9 @@ var
     if s <> '' then
     begin
       if (Lines > 40) then
-        gotoXY(53, 2 * menuzeile + 1)
+        SetCursor(53, 2 * menuzeile + 1)
       else
-        gotoXY(53, menuzeile + 1);
+        SetCursor(53, menuzeile + 1);
 
       if s[2] = ':' then
       begin
@@ -1558,7 +1557,7 @@ var
     doit, c: char;
   begin
     n := input(' - Fleet information; ID: ');
-    gotoxy(3, Lines - 2);
+    SetCursor(3, Lines - 2);
     if (n = 0) or (n > fleets) then
     begin
       error('Invalid fleet!');
@@ -1580,9 +1579,9 @@ var
     repeat
       drawMap(2, 2, 50, (Lines - 24 + 19), x, y, 2);
 
-      clearArea(3, Lines - 2, 78, Lines - 1);
+      ClearRegion(3, Lines - 2, 78, Lines - 1);
 
-      gotoxy(3, Lines - 2);
+      SetCursor(3, Lines - 2);
       if f.ships < 0 then
         print('Death star')
       else
@@ -1591,7 +1590,7 @@ var
       print(' Pos: ' + ptos(x, y) + ' Dest: #' + Int2Str(f.destination, 0));
       print(' ' + TrimStr(d.Name) + ' ' + ptos(d.x, d.y));
       print(' in ' + Real2Str(f.enter - date, 0) + ' h');
-      gotoxy(3, Lines - 1);
+      SetCursor(3, Lines - 1);
       print('Change course (Y/N)? ');
 
       doit := upCase(InKey);
@@ -1599,7 +1598,7 @@ var
 
       if doit = 'Y' then
       begin
-        gotoxy(3, Lines - 1);
+        SetCursor(3, Lines - 1);
         nd := input('ID of new destination: #');
         if (nd > 0) and (nd <= planets) and (nd <> f.destination) then
         begin
@@ -1647,7 +1646,7 @@ var
 
     loadplanet(pid, d);
 
-    gotoXY(3, Lines - 2);
+    SetCursor(3, Lines - 2);
     range := input('Maximum distance (hours): ');
     if range < 0 then
       exit;
@@ -1672,7 +1671,7 @@ var
           if c <> 0 then
             if waitkey = #27 then
               exit;
-          clrscr;
+          ClearScreen;
           collectfleet := True;
           println('     Assemble fleet in planet ' + planettos(pid, d));
           println('     ===============================================');
@@ -1692,7 +1691,7 @@ var
         if anz > p.ships then
           anz := p.ships;
 
-        gotoxy(58, cy);
+        SetCursor(58, cy);
 
         println(Real2Str(anz, 12));
         if anz > 0 then
@@ -1732,26 +1731,26 @@ var
   var
     n: integer;
   begin
-    clrscr;
+    ClearScreen;
     setcolor(blue, 7);
     println('-------------------------------------------------------------------------------');
     for n := 2 to (Lines - 1) do
     begin
-      gotoxy(1, n);
+      SetCursor(1, n);
       print('|');
       if n < (Lines - 24 + 20) then
       begin
-        gotoxy(51, n);
+        SetCursor(51, n);
         print('|');
       end;
-      gotoxy(79, n);
+      SetCursor(79, n);
       print('|');
     end;
 
-    gotoxy(1, Lines);
+    SetCursor(1, Lines);
     print('-------------------------------------------------------------------------------');
 
-    gotoxy(1, (Lines - 4));
+    SetCursor(1, (Lines - 4));
     print('-------------------------------------------------------------------------------');
 
     restoreMap;
@@ -1794,11 +1793,11 @@ begin
     loadPlanet(pid, planet);
     restoreInfo;
 
-    clearArea(3, Lines - 3, 78, Lines - 1);
+    ClearRegion(3, Lines - 3, 78, Lines - 1);
 
     repeat
       TestLeave;
-      gotoxy(3, Lines - 3);
+      SetCursor(3, Lines - 3);
       print('[' + int2str(dt div 60, -2) + ':' + int2str(dt mod 60, -2) + '] Command?  '#8);
       delay(100);
     until keypressed;
@@ -1824,9 +1823,9 @@ begin
       'P':
       begin
         print(' - Change planet');
-        gotoxy(3, Lines - 2);
+        SetCursor(3, Lines - 2);
         n := Input('New planet #');
-        gotoxy(3, Lines - 1);
+        SetCursor(3, Lines - 1);
         if (n <= 0) or (n > planets) then
           error('Invalid value'#7)
         else
@@ -1896,7 +1895,7 @@ begin
       'L':
       begin
         print(' - List');
-        gotoxy(3, Lines - 2);
+        SetCursor(3, Lines - 2);
         setcolor(cyan + 8, 15);
         print('C');
         setcolor(cyan, 7);
@@ -2032,7 +2031,7 @@ begin
   z.last := newDate;
   savePlayer(1, z);
 
-  clrscr;
+  ClearScreen;
 
   fleetwork;
   planetWork;
