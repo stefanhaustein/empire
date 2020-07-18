@@ -3,7 +3,7 @@
 procedure Fatal(s: Str255);
 begin
   WriteLn(s);
-  Halt();
+  Halt;
 end;
 
 function Replace(S: Str255; C, D: Char): Str255;
@@ -92,7 +92,7 @@ begin
   EpochDay := (Y-1970)*365 + LeapDays + DaysGone[M] + D;
 end;
 
-function Now(): Real;
+function Now: Real;
 var
   Year, Month, Day, WeekDay, Hour, Minute, Second, Sec100: Word;
 begin
@@ -101,7 +101,7 @@ begin
   Now := EpochDay(Year, Month, Day) * 24.0 + Hour;
 end;
 
-function Ticks(): Integer;
+function Ticks: Integer;
 var
   Hour, Minute, Second, Sec100: Word;
 begin

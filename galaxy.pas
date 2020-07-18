@@ -127,7 +127,7 @@ begin
   RmDir('mutex.emp');
   {$i+}
 
-  halt(0);
+  halt;
 end;
 
 function ptos(x, y: Integer): Str255;
@@ -650,7 +650,7 @@ begin
 
             OpenMsg(f.owner, planetToS(f.destination, p));
             writeMSG(
-              'FINAL MESSAGE - Attack formation failed to conquer target planet.');
+              'FINAL MESSAGE - Attack formation failed to conquer target planet.');
             writeMSG('All ' + Real2Str(oriF, 0) + ' ships were destroyed.');
             closeMsg;
           end;

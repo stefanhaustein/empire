@@ -472,14 +472,16 @@ var
   p: planetrec;
 
   ships: Real;
-  pid, i: integer;
+  pid, i, rc: integer;
 
 begin
   randomize;
 
+  (*
   DirectVideo := False;
   Assign(Output, '');
   Append(Output);
+  *)
 
   Lines := 24;
   mono := True;
@@ -493,19 +495,19 @@ begin
   if IOResult <> 0 then
   begin
     printLn('Galactic supercomputer already in use. Please try again later.');
-    Halt(1);
+    Halt;
   end;
   {$i+}
 
   id := 0;
-  dt := 100000;
+  dt := 32767;
 
   timer := Ticks;
 
   if ParamStr(3) <> '' then
-    Val(ParamStr(3), newDate)
+    Val(ParamStr(3), newDate, rc)
   else
-    newDate := Now();
+    newDate := Now;
 
   Assign(playerFile, 'player.emp');
   Assign(planetFile, 'planet.emp');
@@ -560,4 +562,3 @@ begin
   end;
   leave;
 end.
-
