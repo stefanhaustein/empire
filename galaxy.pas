@@ -412,37 +412,55 @@ end;
 var
   dest: Integer;
 
+var
+  msgout: File of Char;
+
+procedure writeMsg(s: Str255);
+var
+  N: Integer;
+  C: Char;   
+begin
+  if dest > 1 then
+  begin
+    for N := 1 to Length(S) do
+    begin
+      C := S[N];
+      Write(msgout, S[N]);
+    end;  
+    C := Char(13);
+    Write(msgout, C);
+    C := Char(10);
+    Write(msgout, C);
+  end;
+end;
+
 procedure openMsg(d: Integer; s: Str255);
 begin
   dest := d;
 
   if d > 1 then
   begin
-    Assign(msg, 'msg' + Int2Str(d, 0) + '.emp');
-      {$i-}
-    append(msg);
+    Assign(msgout, 'msg' + Int2Str(d, 0) + '.emp');
+    {$i-}
+    reset(msgout);
     if ioresult <> 0 then
-      rewrite(msg);
-      {$i+}
+      rewrite(msgout)
+    else
+      seek(msgout, filesize(msgout));
+    {$i+}
 
-    writeln(msg);
-    writeln(msg);
-    writeln(msg, 'Date:   ', dtos(date));
-    writeln(msg, 'Source: ', s);
-    writeln(msg);
+    writeMsg('');
+    writeMsg('');
+    writeMsg('Date:   ' +  dtos(date));
+    writeMsg('Source: ' + s);
+    writeMsg('');
   end;
-end;
-
-procedure writeMsg(s: Str255);
-begin
-  if dest > 1 then
-    writeln(msg, s);
 end;
 
 procedure closeMsg;
 begin
   if dest > 1 then
-    Close(msg);
+    Close(msgout);
 end;
 
 procedure AutoCreatePlanets;
