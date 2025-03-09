@@ -1,9 +1,5 @@
 program galactic_empire;
 
-uses
-  crt,
-  dos;
-
 type
   Str255 = String[255];
 
@@ -18,7 +14,7 @@ var
 procedure Fatal(s: Str255);
 begin
   WriteLn(s);
-  Halt();
+  Halt;
 end;
 
 function Replace(S: Str255; C, D: Char): Str255;
@@ -90,7 +86,15 @@ begin
     while Length(S) < N do
       S := Spaces + S;
     AlignStr := Copy(S, Length(S) - N + 1, N);
-  end
+  end;
+end;
+
+procedure GetDate(var Year, Month, Day, WeekDay: Integer);
+begin
+end;
+
+procedure GetTime(var Hour, Minute, Second, Sec100: Integer);
+begin
 end;
 
 function EpochDay(Y, M, D: Integer): Integer;
@@ -107,21 +111,29 @@ begin
   EpochDay := (Y-1970)*365 + LeapDays + DaysGone[M] + D;
 end;
 
-function Now(): Real;
+function Now: Real;
 var
-  Year, Month, Day, WeekDay, Hour, Minute, Second, Sec100: Word;
+  Year, Month, Day, WeekDay, Hour, Minute, Second, Sec100: Integer;
 begin
   GetDate(Year, Month, Day, WeekDay);
   GetTime(Hour, Minute, Second, Sec100);
   Now := EpochDay(Year, Month, Day) * 24.0 + Hour;
 end;
 
-function Ticks(): Integer;
+function Ticks: Integer;
 var
-  Hour, Minute, Second, Sec100: Word;
+  Hour, Minute, Second, Sec100: Integer;
 begin
   GetTime(Hour, Minute, Second, Sec100);
   Ticks := Minute * 60 + Second;
+end;
+
+procedure MkDir(S: String);
+begin
+end;
+
+procedure RmDir(S: String);
+begin
 end;
 
 (* --- End of missing functions --- *)
@@ -245,11 +257,11 @@ begin
   Close(planetFile);
   Close(fleetFile);
 
-  {$i-}
-  RmDir('mutex.emp');
-  {$i+}
+  {-$i-}
+  (* RmDir('mutex.emp'); *)
+  {-$i+}
 
-  halt(0);
+  halt; (* (0); *)
 end;
 
 function ptos(x, y: Integer): Str255;
@@ -282,6 +294,7 @@ begin
     leave;
 end;
 
+(*
 procedure gotoxy(x, y: integer);
 
 begin
@@ -297,6 +310,7 @@ begin
   cx := x;
   cy := y;
 end;
+*)
 
 procedure clearArea(x1, y1, x2, y2: integer);
 var
@@ -306,6 +320,7 @@ begin
   x2 := x2 - x1 + 1;
   for y := y1 to y2 do
   begin
+  (*
     if local then
     begin
       crt.gotoxy(x1, y);
@@ -314,6 +329,7 @@ begin
         1, x2));
     end
     else
+  *)
     begin
       gotoxy(x1, y);
       Write(copy(
@@ -325,6 +341,7 @@ begin
   end;
 end;
 
+(*
 procedure clrscr;
 var
   c: integer;
@@ -357,6 +374,7 @@ begin
     readkey := crt.readkey;
 
 end;
+*)
 
 function waitkey: char;
 var 
@@ -496,7 +514,6 @@ begin
   s := ToUpper(s);
   for n := 1 to players do
   begin
-    ;
     loadplayer(n, p);
     if p.Name = s then
     begin
@@ -551,11 +568,11 @@ begin
   if d > 1 then
   begin
     Assign(msg, 'msg' + Int2Str(d, 0) + '.emp');
-      {$i-}
+    {$i-}
     append(msg);
     if ioresult <> 0 then
       rewrite(msg);
-      {$i+}
+    {$i+}
 
     writeln(msg);
     writeln(msg);
@@ -589,6 +606,7 @@ begin
   println('');
   for n := 1 to 999 do
   begin
+    WriteLn(n);
     planet.x := random(1000);
     planet.y := random(1000);
     planet.production := random(5);
@@ -918,7 +936,7 @@ begin
 
   if not local then
   begin
-    crt.clrscr;
+    (*crt.*)clrscr;
     println('Empire is being played by ' + ParamStr(1) + ' at ' + ParamStr(2) + ' baud');
     println('');
     println('Press ESC to abort...');
@@ -1115,6 +1133,8 @@ var
   k: char;
 
 begin
+exit;
+
   Assign(msg, 'msg' + Int2Str(id, 0) + '.emp');
 {$i-}
   c := 0;
@@ -1385,7 +1405,6 @@ var
   bright: integer;
 
 begin
-
   xf := 2;
   if Lines > 25 then
     yf := 2
@@ -1984,12 +2003,16 @@ var
   ships: Real;
   pid, i: integer;
 
+  E: Integer;
+
 begin
   randomize;
 
+  (*
   DirectVideo := False;
   Assign(Output, '');
   Append(Output);
+  *)
 
   Lines := 24;
   mono := True;
@@ -1998,24 +2021,24 @@ begin
 
   LOCAL := ParamStr(2) = '0';
 
-  {$i-}
-  MkDir('mutex.emp');
+  {-$i-}
+  (*MkDir('mutex.emp');
   if IOResult <> 0 then
   begin
     printLn('Galactic supercomputer already in use. Please try again later.');
     Halt(1);
-  end;
-  {$i+}
+  end;*)
+  {-$i+}
 
   id := 0;
-  dt := 100000;
+  dt := 32767; (* Was: 100000, just needed for auto-logout, which we don't use *)
 
   timer := Ticks;
 
   if ParamStr(3) <> '' then
-    Val(ParamStr(3), newDate)
+    Val(ParamStr(3), newDate, E)
   else
-    newDate := Now();
+    newDate := Now;
 
   Assign(playerFile, 'player.emp');
   Assign(planetFile, 'planet.emp');
@@ -2032,7 +2055,7 @@ begin
   if ioresult <> 0 then
     rewrite(fleetfile);
   {$i+}
-
+  
   loadPlayer(1, z);
 
   date := z.last;
@@ -2047,8 +2070,10 @@ begin
 
   if login then
   begin
-
     displaymessages;
+
+
+
     ships := 0;
     pid := -1;
     for i := 1 to planets do
