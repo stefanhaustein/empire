@@ -881,8 +881,7 @@ begin
   println('The flight to ' + p2.Name + ' will take about ' + Real2str(time, 0) + ' hours.');
   gotoxy(3, Lines - 1);
 
-  if todesstern then
-  begin
+  if todesstern then begin
     print('Confirm launch of the death star with "Y", abort otherwise? ');
     if upcase(readkey) <> 'Y' then
     begin
@@ -934,8 +933,7 @@ var
 begin
   clrscr;
 
-  if not local then
-  begin
+  if not local then begin
     (*crt.*)clrscr;
     println('Empire is being played by ' + ParamStr(1) + ' at ' + ParamStr(2) + ' baud');
     println('');
