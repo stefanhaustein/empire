@@ -1,5 +1,5 @@
 
-procedure print(s: Str255);
+procedure print(s: String);
 begin
   if s <> '' then
   begin
@@ -8,7 +8,7 @@ begin
   end;
 end;
 
-procedure println(s: Str255);
+procedure println(s: String);
 begin
   print(s);
   print(#13#10);
@@ -20,9 +20,9 @@ procedure SetColor(i, j: integer);
 var
   fg, bg: integer;
   bold: char;
-  blink: Str255;
+  blink: String;
 const
-  table: Str255 = '04261537';
+  table: String = '04261537';
 begin
   if mono then
     i := j;

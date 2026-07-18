@@ -1,5 +1,5 @@
 
-function Replace(S: Str255; C, D: Char): Str255;
+function Replace(S: String; C, D: Char): String;
 var
   I: Integer;
 begin
@@ -9,7 +9,7 @@ begin
   Replace := S;
 end;
 
-function ToUpper(S: Str255): Str255;
+function ToUpper(S: String): String;
 var
   I: Integer;
 begin
@@ -18,9 +18,9 @@ begin
   ToUpper := S;  
 end;
 
-function Real2Str(R: Real; N: Integer): Str255;
+function Real2Str(R: Real; N: Integer): String;
 var
-  S: Str255;
+  S: String;
 begin
   Str(R:Abs(N):0, S);
   if N < 0 then
@@ -28,9 +28,9 @@ begin
   Real2Str := S;
 end;
 
-function Int2Str(I: Integer; N: Integer): Str255;
+function Int2Str(I: Integer; N: Integer): String;
 var
-  S: Str255;
+  S: String;
 begin
   Str(I:Abs(N), S);
   if N < 0 then
@@ -38,7 +38,7 @@ begin
   Int2Str := S;
 end;
 
-function TrimStr(S: Str255): Str255;
+function TrimStr(S: String): String;
 var
   I, J: Integer;
 begin
@@ -51,7 +51,7 @@ begin
   TrimStr := Copy(S, I, J - I);
 end;
 
-function AlignStr(S: Str255; N: Integer): Str255;
+function AlignStr(S: String; N: Integer): String;
 const
   Spaces = '                ';
 begin
