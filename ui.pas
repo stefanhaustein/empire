@@ -6,7 +6,7 @@ begin
   for i := 1 to PlanetCount do
   begin
     planet := Planets[i];
-    CursorPosition(planet.y, planet.x * 2);
+    gotoXY(planet.x * 3, planet.y);
     write(i);
   end;
 
