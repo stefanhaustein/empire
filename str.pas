@@ -1,3 +1,5 @@
+type 
+  str16 = String[16];
 
 function Replace(S: String; C, D: Char): String;
 var

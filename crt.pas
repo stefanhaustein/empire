@@ -1,4 +1,9 @@
 
+var cx, cy: Real;
+var mono: Boolean;
+var color: Integer;
+
+
 procedure print(s: String);
 begin
   if s <> '' then
@@ -13,7 +18,7 @@ begin
   print(s);
   print(#13#10);
   cx := 1;
-  Inc(cy, 1);
+  cy := cy + 1;
 end;
 
 procedure SetColor(i, j: integer);
@@ -41,9 +46,6 @@ begin
     else
       blink := '';
 
-    if local then
-      textcolor(color)
-    else
-      Write(#27'[' + bold + ';3' + table[1 + fg] + blink + 'm');
+    Write(#27'[' + bold + ';3' + table[1 + fg] + blink + 'm');
   end;
 end;

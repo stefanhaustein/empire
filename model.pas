@@ -1,4 +1,5 @@
-planetRec = record
+type 
+  planetRec = record
     Name: str16;
     production: Integer;      (* Ships per hour             *)
     ships: Real;              (* Ships                      *)
@@ -34,7 +35,6 @@ var
   n: Integer;
 
 begin
-  rewrite(planetfile);
   println('');
   println('Creating universe...');
   println('');
@@ -59,6 +59,5 @@ begin
       planet.Name := 'NAMELESS';
       planet.ownername := 'INDEPENDENT';
     end;
-    savePlanet(n, planet);
   end;
 end;
