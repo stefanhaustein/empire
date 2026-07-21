@@ -1,24 +1,13 @@
-
-var cx, cy: Real;
-var mono: Boolean;
+var mono: boolean;
 var color: Integer;
 
-
-procedure print(s: String);
+(* 
+ * Sets the Cursor postion to the given line and column using the "H"
+ * ANSI command. Coordinates are 1-based, matching the ANSI command.
+ *)
+procedure CursorPosition(Line, Column: Integer);
 begin
-  if s <> '' then
-  begin
-    Write(s);
-    cx := cx + length(s);
-  end;
-end;
-
-procedure println(s: String);
-begin
-  print(s);
-  print(#13#10);
-  cx := 1;
-  cy := cy + 1;
+  Write(Chr(27), 'Y', Chr(Line - 1 + 32), Chr(Column - 1 + 32));
 end;
 
 procedure SetColor(i, j: integer);

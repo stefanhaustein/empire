@@ -22,6 +22,8 @@ type
     ownerName: str16;         (* Redundant to avoid lookup  *)
   end;
 
+const planetCount = 20;
+var planets: array[1..planetCount] of planetRec;
 
 function traveltime(x0, y0, x1, y1: Integer): Real;
 begin
@@ -29,20 +31,16 @@ begin
 end;
 
 
-procedure AutoCreatePlanets;
+procedure InitModel;
 var
   planet: planetRec;
   n: Integer;
 
 begin
-  println('');
-  println('Creating universe...');
-  println('');
-  for n := 1 to 999 do
+  for n := 1 to PlanetCount do
   begin
-    WriteLn(n);
-    planet.x := random(1000);
-    planet.y := random(1000);
+    planet.x := random(20);
+    planet.y := random(20);
     planet.production := random(5);
     planet.ships := random(1500);
     planet.owner := 0;
@@ -59,5 +57,6 @@ begin
       planet.Name := 'NAMELESS';
       planet.ownername := 'INDEPENDENT';
     end;
+    planets[n] := planet;
   end;
 end;
