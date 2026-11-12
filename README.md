@@ -1,3 +1,3 @@
 # Empire
 
-
+This game is supposed to run on a dialup BBS system...
