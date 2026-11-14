@@ -91,10 +91,18 @@ end;
 
 procedure GetDate(var Year, Month, Day, WeekDay: Integer);
 begin
+  Year := 1980;
+  Month := 1;
+  Day := 1;
+  WeekDay := 2; (* Tuesday *)
 end;
 
 procedure GetTime(var Hour, Minute, Second, Sec100: Integer);
 begin
+  Hour := 0;
+  Minute := 0;
+  Second := 0;
+  Sec100 := 0;
 end;
 
 function EpochDay(Y, M, D: Integer): Integer;
@@ -417,7 +425,7 @@ var
   D, H: Integer;
 begin
   D := Trunc(R / 24);
-  H := Trunc(R - 24 * D);
+  H := Trunc(R - 24.0 * D);
 
   dtos := 'Stardate ' + Int2Str(D, 0) + '.' + Int2Str(H, 0);
 
@@ -962,7 +970,7 @@ begin
   (* If this planet is owned by the computer, reduce troops to 10%.  *)
   (* Might be leftover from "revolutions" -- or a non working        *)
   (* attempt to avoid the computer homeworld becoming unconquerable? *)
-  pn := 1 + Random(1000);
+  pn := 1 + Random(Planets);
 
   loadplanet(pn, p);
   if p.owner = 1 then
@@ -980,7 +988,7 @@ begin
       id := freePlayer;
       player.last := NewDate;
       player.Name := Name;
-      pn := 1 + Random(1000);
+      pn := 1 + Random(Planets);
       loadplanet(pn, p);
       p.ships := p.ships + random(2000) + 4000; (* some "startup capital" for the new player *)
       p.production := 5;
@@ -1278,7 +1286,7 @@ begin
   end;
 
   println('         Planets under control: ' + Int2Str(paz, 0));
-  println('                    Percentage: ' + Real2Str(paz * 100 / 1000, 0) + ' %');
+  println('                    Percentage: ' + Real2Str(paz * 100 / Planets, 0) + ' %');
   println('          Total resident ships: ' + Real2Str(pfl, 0));
   println('        Ships produced per day: ' + Real2Str(ppr * 24, 0));
   println('');
@@ -2015,9 +2023,9 @@ begin
   Lines := 24;
   mono := True;
 
-  setcolor(cyan, 7);
-
   LOCAL := ParamStr(2) = '0';
+
+  setcolor(cyan, 7);
 
   {-$i-}
   (*MkDir('mutex.emp');
